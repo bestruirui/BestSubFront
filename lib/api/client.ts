@@ -8,8 +8,13 @@ import type {
   HealthResponse,
   SubCreateRequest,
   SubUpdateRequest,
-  CheckTypeConfig,
+  DynamicConfigItem,
   SubNameAndID,
+  NotifyResponse,
+  NotifyRequest,
+  NotifyTemplate,
+  NotifyChannel,
+  NotifyChannelConfigResponse,
 } from '../types'
 
 export class ApiError extends Error {
@@ -169,12 +174,12 @@ export const dashboardApi = {
     const response = await apiClient.get<ApiResponse<string[]>>('/api/v1/check/type', token)
     return response.data
   },
-  async getCheckTypeConfig(token: string, type?: string): Promise<Record<string, CheckTypeConfig[]> | CheckTypeConfig[]> {
+  async getCheckTypeConfig(token: string, type?: string): Promise<Record<string, DynamicConfigItem[]> | DynamicConfigItem[]> {
     const url = type
       ? `/api/v1/check/type/config?type=${type}`
       : '/api/v1/check/type/config'
 
-    const response = await apiClient.get<ApiResponse<Record<string, CheckTypeConfig[]>>>(url, token)
+    const response = await apiClient.get<ApiResponse<Record<string, DynamicConfigItem[]>>>(url, token)
     return response.data
   },
   async getSystemHealth(): Promise<HealthResponse> {
@@ -213,6 +218,61 @@ export const dashboardApi = {
   },
   async getSubNameAndID(token: string): Promise<SubNameAndID[]> {
     const response = await apiClient.get<ApiResponse<SubNameAndID[]>>(apiConfig.endpoints.subNameAndID, token)
+    return response.data
+  },
+
+  // Notify API methods
+  async getNotifyChannels(token: string): Promise<NotifyChannel[]> {
+    const response = await apiClient.get<ApiResponse<NotifyChannel[]>>(`${apiConfig.endpoints.notify}/channel`, token)
+    return response.data
+  },
+
+  async getNotifyChannelConfig(token: string, channel?: string): Promise<NotifyChannelConfigResponse | DynamicConfigItem[]> {
+    const url = channel
+      ? `${apiConfig.endpoints.notify}/channel/config?channel=${encodeURIComponent(channel)}`
+      : `${apiConfig.endpoints.notify}/channel/config`
+    const response = await apiClient.get<ApiResponse<NotifyChannelConfigResponse | DynamicConfigItem[]>>(url, token)
+    return response.data
+  },
+
+  async getNotifyList(token: string): Promise<NotifyResponse[]> {
+    const response = await apiClient.get<ApiResponse<NotifyResponse[]>>(apiConfig.endpoints.notify, token)
+    return response.data
+  },
+
+  async createNotify(data: NotifyRequest, token: string): Promise<NotifyResponse> {
+    const response = await apiClient.post<ApiResponse<NotifyResponse>>(apiConfig.endpoints.notify, data, token)
+    return response.data
+  },
+
+  async updateNotify(id: number, data: NotifyRequest, token: string): Promise<NotifyResponse> {
+    const response = await apiClient.put<ApiResponse<NotifyResponse>>(`${apiConfig.endpoints.notify}?id=${id}`, data, token)
+    return response.data
+  },
+
+  async deleteNotify(id: number, token: string): Promise<void> {
+    try {
+      await apiClient.delete<ApiResponse<void>>(`${apiConfig.endpoints.notify}?id=${id}`, token)
+    } catch (error) {
+      // If deletion is successful but returns an empty response, do not throw an error
+      if (error instanceof ApiError && (error.status === 204 || error.status === 205)) {
+        return
+      }
+      throw error
+    }
+  },
+
+  async testNotify(data: NotifyRequest, token: string): Promise<void> {
+    await apiClient.post<ApiResponse<void>>(`${apiConfig.endpoints.notify}/test`, data, token)
+  },
+
+  async getNotifyTemplates(token: string): Promise<NotifyTemplate[]> {
+    const response = await apiClient.get<ApiResponse<NotifyTemplate[]>>(`${apiConfig.endpoints.notify}/template`, token)
+    return response.data
+  },
+
+  async updateNotifyTemplate(data: NotifyTemplate, token: string): Promise<NotifyTemplate> {
+    const response = await apiClient.put<ApiResponse<NotifyTemplate>>(`${apiConfig.endpoints.notify}/template`, data, token)
     return response.data
   },
 }

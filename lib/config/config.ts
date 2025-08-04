@@ -50,6 +50,7 @@ export const apiConfig = {
     sub: '/api/v1/sub',
     subNameAndID: '/api/v1/sub/name',
     check: '/api/v1/check',
+    notify: '/api/v1/notify',
     system: {
       health: '/api/v1/system/health',
       info: '/api/v1/system/info',

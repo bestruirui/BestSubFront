@@ -5,7 +5,7 @@ import { SubscriptionPage } from '@/components/features/subscription'
 import { CheckPage } from '@/components/features/check'
 import { SharesPage } from '@/components/pages/share/share'
 import { StoragePage } from '@/components/pages/storage/storage'
-import { NotificationsPage } from '@/components/pages/notify/notifiy'
+import { NotifyPage } from '@/components/features/notify'
 import { LoginPage } from '@/components/pages/login/login'
 
 export const routes: Route[] = [
@@ -47,7 +47,7 @@ export const routes: Route[] = [
   },
   {
     path: '/notifications',
-    component: NotificationsPage,
+    component: NotifyPage,
     title: '通知配置',
     protected: true,
   },

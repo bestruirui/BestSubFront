@@ -11,6 +11,9 @@ export * from './subscription'
 // 检测相关类型
 export * from './check'
 
+// 通知相关类型
+export * from './notify'
+
 // API相关类型
 export * from './api'
 

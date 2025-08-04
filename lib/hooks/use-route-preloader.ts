@@ -34,7 +34,7 @@ async function preloadComponent(path: string): Promise<unknown> {
                 importPromise = import('@/components/pages/storage/storage')
                 break
             case '/notifications':
-                importPromise = import('@/components/pages/notify/notifiy')
+                importPromise = import('@/components/features/notify')
                 break
             case '/login':
                 importPromise = import('@/components/pages/login/login')
