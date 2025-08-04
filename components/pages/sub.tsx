@@ -12,9 +12,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table"
 import { InlineLoading } from "@/components/ui/loading"
 import { Plus, RefreshCw, Edit, Trash2 } from "lucide-react"
-import { dashboardApi } from "@/lib/api-client"
+import { dashboardApi } from "@/lib/api/client"
 import { useAuth } from "@/components/providers/auth-provider"
-import { formatTime, validateTimeout, validateUrl, validateCronExpr, validateSubscriptionForm, getNextCronRunTime, formatDuration, getStatusBadgeConfig } from "@/lib/utils"
+import { formatTime, getNextCronRunTime, validateTimeout, validateUrl, validateCronExpr, validateSubscriptionForm, formatDuration, getStatusBadgeConfig } from "@/lib/utils"
 import type { SubResponse, SubCreateRequest } from "@/lib/types"
 
 export function SubscriptionsPage() {

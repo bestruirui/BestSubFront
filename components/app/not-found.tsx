@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Home, ArrowLeft } from "lucide-react"
-import { useRouter } from "@/lib/router"
+import { useRouter } from "@/lib/router/router"
 
 interface NotFoundProps {
   path?: string

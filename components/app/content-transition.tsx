@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, ReactNode, useRef } from "react"
-import { useRouter } from "@/lib/router"
+import { useRouter } from "@/lib/router/router"
 import { Spinner } from "@/components/ui/loading"
 
 interface ContentTransitionProps {

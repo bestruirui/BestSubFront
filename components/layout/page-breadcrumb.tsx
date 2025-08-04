@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter } from "@/lib/router"
+import { useRouter } from "@/lib/router/router"
 import { Home } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {

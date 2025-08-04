@@ -1,7 +1,7 @@
 
 import { createStore } from './base-store'
-import { dashboardApi } from '@/lib/api-client'
-import type { CheckResponse } from '@/lib/types'
+import { dashboardApi } from '@/lib/api/client'
+import type { CheckResponse } from '@/lib/types/check'
 
 export interface CheckCreateData {
   name: string

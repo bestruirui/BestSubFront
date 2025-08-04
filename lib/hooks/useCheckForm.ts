@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
-import { dashboardApi } from '@/lib/api-client'
-import type { CheckResponse, CheckTypeConfig, SubNameAndID } from '@/lib/types'
+import { dashboardApi } from '@/lib/api/client'
+import type { CheckResponse, CheckTypeConfig } from '@/lib/types/check'
+import type { SubNameAndID } from '@/lib/types/subscription'
 
 interface FormData {
     name: string

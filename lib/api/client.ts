@@ -1,4 +1,4 @@
-import { apiConfig, defaultRequestConfig } from './config/config'
+import { apiConfig, defaultRequestConfig } from '../config/config'
 import type {
   LoginResponse,
   UserInfo,
@@ -10,7 +10,7 @@ import type {
   SubUpdateRequest,
   CheckTypeConfig,
   SubNameAndID,
-} from './types'
+} from '../types'
 
 export class ApiError extends Error {
   constructor(

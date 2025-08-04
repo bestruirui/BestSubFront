@@ -1,7 +1,7 @@
 
 import { createStore } from './base-store'
-import { dashboardApi } from '@/lib/api-client'
-import type { SubResponse, SubCreateRequest, SubUpdateRequest } from '@/lib/types'
+import { dashboardApi } from '@/lib/api/client'
+import type { SubResponse, SubCreateRequest, SubUpdateRequest } from '@/lib/types/subscription'
 
 export type SubscriptionCreateData = SubCreateRequest
 export type SubscriptionUpdateData = SubUpdateRequest

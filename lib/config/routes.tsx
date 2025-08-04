@@ -1,4 +1,4 @@
-import { Route } from '@/lib/router'
+import { Route } from '@/lib/router/router'
 
 import { DashboardPage } from '@/components/pages/dashboard'
 import { SubscriptionsPage } from '@/components/pages/sub'

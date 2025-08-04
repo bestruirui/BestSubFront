@@ -1,7 +1,7 @@
 "use client"
 
 import { type Icon } from "@tabler/icons-react"
-import { useRouter } from "@/lib/router"
+import { useRouter } from "@/lib/router/router"
 import { useLinkPreloader } from "@/lib/hooks/use-route-preloader"
 
 import {

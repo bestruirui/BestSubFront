@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { dashboardApi } from '@/lib/api-client'
+import { dashboardApi } from '@/lib/api/client'
 
 interface UseCheckOperationsReturn {
     handleDelete: (id: number) => Promise<void>

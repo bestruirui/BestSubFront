@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useAuth } from "@/components/providers/auth-provider"
 import { getAppConfig } from "@/lib/config/config"
-import { ApiError } from "@/lib/api-client"
+import { ApiError } from "@/lib/api/client"
 import { Spinner } from "@/components/ui/loading"
 
 export function LoginForm({

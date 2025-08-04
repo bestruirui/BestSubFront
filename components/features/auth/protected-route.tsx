@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { useRouter } from "@/lib/router"
+import { useRouter } from "@/lib/router/router"
 import { useAuth } from "@/components/providers/auth-provider"
 import { Loading } from "@/components/ui/loading"
 
