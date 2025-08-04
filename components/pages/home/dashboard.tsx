@@ -6,8 +6,6 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { RefreshCw, Play, TrendingUp, Activity } from "lucide-react"
 import { useDashboardData } from "@/lib/hooks"
-import { useSubscriptionStats } from "@/lib/stores"
-import { useCheckStats } from "@/lib/stores"
 
 function StatsSkeleton() {
   return (
@@ -31,8 +29,8 @@ function StatsCards({
   subscriptionStats,
   checkStats
 }: {
-  subscriptionStats: ReturnType<typeof useSubscriptionStats>
-  checkStats: ReturnType<typeof useCheckStats>
+  subscriptionStats: any
+  checkStats: any
 }) {
   return (
     <>
@@ -129,8 +127,8 @@ function RecentActivity({
   checkStats
 }: {
   isLoading: boolean
-  subscriptionStats: ReturnType<typeof useSubscriptionStats>
-  checkStats: ReturnType<typeof useCheckStats>
+  subscriptionStats: any
+  checkStats: any
 }) {
   return (
     <div className="px-4 lg:px-6">
