@@ -132,10 +132,24 @@ export function useCheckForm({ onSuccess, _user }: UseCheckFormProps) {
         }
 
         try {
+            // 处理配置数据，将空值替换为 default 值
+            const processedConfig = { ...formData.config }
+            const configs = checkTypeConfigs[formData.type] || []
+
+            configs.forEach(config => {
+                const value = processedConfig[config.key]
+                // 如果值为空且有 default 值，则使用 default 值
+                if ((value === undefined || value === '' || value === null) && config.default) {
+                    processedConfig[config.key] = config.default
+                }
+            })
+
+            const submitData = { ...formData, config: processedConfig }
+
             if (editingCheck) {
-                await dashboardApi.updateCheck(editingCheck.id, formData, token)
+                await dashboardApi.updateCheck(editingCheck.id, submitData, token)
             } else {
-                await dashboardApi.createCheck(formData, token)
+                await dashboardApi.createCheck(submitData, token)
             }
 
             setIsDialogOpen(false)
@@ -146,7 +160,7 @@ export function useCheckForm({ onSuccess, _user }: UseCheckFormProps) {
             console.error('Failed to save check:', error)
             alert('保存失败，请重试')
         }
-    }, [formData, editingCheck, getToken, onSuccess])
+    }, [formData, editingCheck, getToken, onSuccess, checkTypeConfigs])
 
     const handleEdit = useCallback((check: CheckResponse) => {
         setEditingCheck(check)

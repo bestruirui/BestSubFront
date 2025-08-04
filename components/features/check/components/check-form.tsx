@@ -9,6 +9,7 @@ import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
+import { DynamicConfigForm } from "@/components/ui/dynamic-config-form"
 import type { DynamicConfigItem } from "@/lib/types/common"
 
 interface FormData {
@@ -57,13 +58,6 @@ export function CheckForm({
     handleSubmit,
     onOpenChange,
 }: CheckFormProps) {
-    // 验证动态配置字段是否为空
-    const isConfigFieldEmpty = (configName: string, configType: string, value: unknown): boolean => {
-        if (configType === 'boolean') return false // 布尔类型不需要验证
-        // 如果值为undefined或空字符串，则认为是空的
-        return value === undefined || value === '' || (typeof value === 'string' && value.trim() === '')
-    }
-
     return (
         <Dialog open={isDialogOpen} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto scrollbar-hide">
@@ -237,117 +231,18 @@ export function CheckForm({
 
                     {/* 动态配置字段 */}
                     {formData.type && (
-                        <div>
-                            {isLoadingConfigs ? (
-                                <div className="text-center py-4 text-muted-foreground">
-                                    加载配置中...
-                                </div>
-                            ) : (checkTypeConfigs[formData.type] || []).length > 0 ? (
-                                <div className="space-y-4">
-                                    {(checkTypeConfigs[formData.type] || []).map((config) => (
-                                        <div key={config.key}>
-                                            <Label htmlFor={config.key} className="mb-2 block">
-                                                {config.name}
-                                                {config.require && <span className="text-red-500 ml-1">*</span>}
-                                            </Label>
-                                            {config.type === 'boolean' ? (
-                                                <div className="flex items-center space-x-3">
-                                                    <Label htmlFor={config.key}>{config.name}</Label>
-                                                    <Switch
-                                                        id={config.key}
-                                                        checked={formData.config[config.key] as boolean || false}
-                                                        onCheckedChange={(checked: boolean) =>
-                                                            setFormData(prev => ({
-                                                                ...prev,
-                                                                config: { ...prev.config, [config.key]: checked }
-                                                            }))
-                                                        }
-                                                    />
-                                                </div>
-                                            ) : config.type === 'number' ? (
-                                                <Input
-                                                    id={config.key}
-                                                    type="number"
-                                                    value={formData.config[config.key] !== undefined ? formData.config[config.key] as string : ''}
-                                                    onChange={(e) =>
-                                                        setFormData(prev => ({
-                                                            ...prev,
-                                                            config: { ...prev.config, [config.key]: parseFloat(e.target.value) || 0 }
-                                                        }))
-                                                    }
-                                                    onFocus={(_e) => {
-                                                        // 如果当前值是默认值且用户没有手动输入过，则清空输入框
-                                                        if (formData.config[config.key] === undefined && config.default) {
-                                                            setFormData(prev => ({
-                                                                ...prev,
-                                                                config: { ...prev.config, [config.key]: '' }
-                                                            }))
-                                                        }
-                                                    }}
-                                                    placeholder={config.default || ''}
-                                                    required={config.require}
-                                                    className={config.require && isConfigFieldEmpty(config.key, config.type, formData.config[config.key]) ? 'border-red-500' : ''}
-                                                />
-                                            ) : config.type === 'select' && config.options ? (
-                                                <Select
-                                                    value={formData.config[config.key] !== undefined ? formData.config[config.key] as string : ''}
-                                                    onValueChange={(value) =>
-                                                        setFormData(prev => ({
-                                                            ...prev,
-                                                            config: { ...prev.config, [config.key]: value }
-                                                        }))
-                                                    }
-                                                >
-                                                    <SelectTrigger className={config.require && isConfigFieldEmpty(config.key, config.type, formData.config[config.key]) ? 'border-red-500' : ''}>
-                                                        <SelectValue placeholder={config.default || ''} />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {config.options.split(',').map((option: string) => (
-                                                            <SelectItem key={option.trim()} value={option.trim()}>
-                                                                {option.trim()}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
-                                            ) : (
-                                                <Input
-                                                    id={config.key}
-                                                    value={formData.config[config.key] !== undefined ? formData.config[config.key] as string : ''}
-                                                    onChange={(e) =>
-                                                        setFormData(prev => ({
-                                                            ...prev,
-                                                            config: { ...prev.config, [config.key]: e.target.value }
-                                                        }))
-                                                    }
-                                                    onFocus={(_e) => {
-                                                        // 如果当前值是默认值且用户没有手动输入过，则清空输入框
-                                                        if (formData.config[config.key] === undefined && config.default) {
-                                                            setFormData(prev => ({
-                                                                ...prev,
-                                                                config: { ...prev.config, [config.key]: '' }
-                                                            }))
-                                                        }
-                                                    }}
-                                                    placeholder={config.default || ''}
-                                                    required={config.require}
-                                                    className={config.require && isConfigFieldEmpty(config.key, config.type, formData.config[config.key]) ? 'border-red-500' : ''}
-                                                />
-                                            )}
-                                            {config.desc && (
-                                                <p className="text-xs text-muted-foreground mt-1">{config.desc}</p>
-                                            )}
-                                            {config.require && isConfigFieldEmpty(config.key, config.type, formData.config[config.key]) && (
-                                                <p className="text-xs text-red-500 mt-1">此字段为必填项</p>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="text-center py-4 text-muted-foreground">
-                                    选择检测类型后将显示相关配置项
-                                </div>
-                            )}
-                        </div>
+                        <DynamicConfigForm
+                            configs={checkTypeConfigs[formData.type] || []}
+                            configValues={formData.config}
+                            onConfigChange={(field, value) => {
+                                setFormData(prev => ({
+                                    ...prev,
+                                    config: { ...prev.config, [field]: value }
+                                }))
+                            }}
+                            isLoading={isLoadingConfigs}
+                            typeName="检测类型"
+                        />
                     )}
 
                     <div className="flex gap-2 pt-4">
