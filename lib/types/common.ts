@@ -44,4 +44,29 @@ export interface StatusInfo {
     status: Status
     message?: string
     timestamp?: string
+}
+
+/**
+ * 动态配置项类型（用于 check 和 notify）
+ */
+export interface DynamicConfigItem {
+    name: string
+    key: string
+    type: string
+    default: string
+    options: string
+    require: boolean
+    desc: string
+}
+
+/**
+ * 动态配置值类型
+ */
+export type ConfigValue = string | number | boolean
+
+/**
+ * 动态配置对象类型
+ */
+export interface DynamicConfig {
+    [key: string]: ConfigValue
 } 

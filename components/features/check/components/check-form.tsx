@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
-import type { CheckTypeConfig } from "@/lib/types/check"
+import type { DynamicConfigItem } from "@/lib/types/common"
 
 interface FormData {
     name: string
@@ -31,7 +31,7 @@ interface CheckFormProps {
     editingCheck: unknown
     isDialogOpen: boolean
     checkTypes: string[]
-    checkTypeConfigs: Record<string, CheckTypeConfig[]>
+    checkTypeConfigs: Record<string, DynamicConfigItem[]>
     subList: Array<{ id: number; name: string }>
     isLoadingTypes: boolean
     isLoadingConfigs: boolean
@@ -302,7 +302,7 @@ export function CheckForm({
                                                         <SelectValue placeholder={config.default || ''} />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        {config.options.split(',').map(option => (
+                                                        {config.options.split(',').map((option: string) => (
                                                             <SelectItem key={option.trim()} value={option.trim()}>
                                                                 {option.trim()}
                                                             </SelectItem>

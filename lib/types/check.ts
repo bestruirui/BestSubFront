@@ -1,8 +1,4 @@
 /**
- * 检测相关类型定义
- */
-
-/**
  * 检测结果类型
  */
 export interface CheckResult {
@@ -38,36 +34,3 @@ export interface CheckResponse {
     task: CheckTask
     status: string
 }
-
-/**
- * 检测类型配置项
- */
-export interface CheckTypeConfig {
-    name: string
-    key: string
-    type: string
-    default: string
-    options: string
-    require: boolean
-    desc: string
-}
-
-/**
- * 检测类型响应
- */
-export interface CheckTypeResponse {
-    types: string[]
-    configs: Record<string, CheckTypeConfig[]>
-}
-
-/**
- * 动态配置值类型
- */
-export type ConfigValue = string | number | boolean
-
-/**
- * 动态配置对象类型
- */
-export interface DynamicConfig {
-    [key: string]: ConfigValue
-} 

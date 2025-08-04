@@ -5,7 +5,8 @@
 import { useState, useCallback } from 'react'
 import { dashboardApi } from '@/lib/api/client'
 import { validateCheckForm } from '@/lib/utils'
-import type { CheckResponse, CheckTypeConfig } from '@/lib/types/check'
+import type { CheckResponse } from '@/lib/types/check'
+import type { DynamicConfigItem } from '@/lib/types/common'
 import type { SubNameAndID } from '@/lib/types/subscription'
 
 interface FormData {
@@ -46,7 +47,7 @@ const DEFAULT_FORM_DATA: FormData = {
 export function useCheckForm({ onSuccess, _user }: UseCheckFormProps) {
     const [formData, setFormData] = useState<FormData>(DEFAULT_FORM_DATA)
     const [checkTypes, setCheckTypes] = useState<string[]>([])
-    const [checkTypeConfigs, setCheckTypeConfigs] = useState<Record<string, CheckTypeConfig[]>>({})
+    const [checkTypeConfigs, setCheckTypeConfigs] = useState<Record<string, DynamicConfigItem[]>>({})
     const [subList, setSubList] = useState<SubNameAndID[]>([])
     const [isLoadingTypes, setIsLoadingTypes] = useState(false)
     const [isLoadingConfigs, setIsLoadingConfigs] = useState(false)
