@@ -2,7 +2,7 @@ import { Route } from '@/lib/router/router'
 
 import { DashboardPage } from '@/components/pages/home/dashboard'
 import { SubscriptionPage } from '@/components/features/subscription'
-import { ChecksPage } from '@/components/pages/check/check'
+import { CheckPage } from '@/components/features/check'
 import { SharesPage } from '@/components/pages/share/share'
 import { StoragePage } from '@/components/pages/storage/storage'
 import { NotificationsPage } from '@/components/pages/notify/notifiy'
@@ -29,7 +29,7 @@ export const routes: Route[] = [
   },
   {
     path: '/checks',
-    component: ChecksPage,
+    component: CheckPage,
     title: '检测任务',
     protected: true,
   },
