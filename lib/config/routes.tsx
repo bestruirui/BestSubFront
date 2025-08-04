@@ -1,12 +1,12 @@
 import { Route } from '@/lib/router/router'
 
-import { DashboardPage } from '@/components/pages/dashboard'
-import { SubscriptionsPage } from '@/components/pages/sub'
-import { ChecksPage } from '@/components/pages/check'
-import { SharesPage } from '@/components/pages/share'
-import { StoragePage } from '@/components/pages/storage'
-import { NotificationsPage } from '@/components/pages/notifiy'
-import { LoginPage } from '@/components/pages/login'
+import { DashboardPage } from '@/components/pages/home/dashboard'
+import { SubscriptionPage } from '@/components/features/subscription'
+import { ChecksPage } from '@/components/pages/check/check'
+import { SharesPage } from '@/components/pages/share/share'
+import { StoragePage } from '@/components/pages/storage/storage'
+import { NotificationsPage } from '@/components/pages/notify/notifiy'
+import { LoginPage } from '@/components/pages/login/login'
 
 export const routes: Route[] = [
   {
@@ -23,7 +23,7 @@ export const routes: Route[] = [
   },
   {
     path: '/subscriptions',
-    component: SubscriptionsPage,
+    component: SubscriptionPage,
     title: '订阅管理',
     protected: true,
   },

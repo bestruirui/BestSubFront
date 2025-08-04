@@ -19,25 +19,25 @@ async function preloadComponent(path: string): Promise<unknown> {
     try {
         switch (path) {
             case '/dashboard':
-                importPromise = import('@/components/pages/dashboard')
+                importPromise = import('@/components/pages/home/dashboard')
                 break
             case '/subscriptions':
-                importPromise = import('@/components/pages/sub')
+                importPromise = import('@/components/features/subscription')
                 break
             case '/checks':
-                importPromise = import('@/components/pages/check')
+                importPromise = import('@/components/pages/check/check')
                 break
             case '/shares':
-                importPromise = import('@/components/pages/share')
+                importPromise = import('@/components/pages/share/share')
                 break
             case '/storage':
-                importPromise = import('@/components/pages/storage')
+                importPromise = import('@/components/pages/storage/storage')
                 break
             case '/notifications':
-                importPromise = import('@/components/pages/notifiy')
+                importPromise = import('@/components/pages/notify/notifiy')
                 break
             case '/login':
-                importPromise = import('@/components/pages/login')
+                importPromise = import('@/components/pages/login/login')
                 break
             default:
                 preloadingPaths.delete(path)
