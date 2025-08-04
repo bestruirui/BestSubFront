@@ -21,8 +21,6 @@ export interface NotifyResponse {
     name: string
     type: string
     config: Record<string, unknown>
-    created_at: string
-    updated_at: string
 }
 
 /**

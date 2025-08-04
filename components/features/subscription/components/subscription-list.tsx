@@ -155,7 +155,7 @@ export function SubscriptionList({
                                                 size="sm"
                                                 variant="outline"
                                                 onClick={() => onRefresh(sub.id)}
-                                                disabled={!sub.enable || refreshingId === sub.id}
+                                                disabled={refreshingId === sub.id}
                                                 className={refreshingId === sub.id ? 'opacity-50' : ''}
                                             >
                                                 <RefreshCw className={`h-4 w-4 ${refreshingId === sub.id ? 'animate-spin' : ''}`} />

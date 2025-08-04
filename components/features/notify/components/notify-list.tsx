@@ -1,10 +1,9 @@
 import { Button } from "@/components/ui/button"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { formatTime } from "@/lib/utils"
 import type { NotifyResponse } from "@/lib/types"
+import { Play, Edit, Trash2 } from "lucide-react"
 
 interface NotifyListProps {
     notifies: NotifyResponse[]
@@ -72,31 +71,14 @@ export function NotifyList({
             </CardHeader>
             <CardContent>
                 <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>名称</TableHead>
-                            <TableHead>渠道</TableHead>
-                            <TableHead>创建时间</TableHead>
-                            <TableHead>更新时间</TableHead>
-                            <TableHead className="text-right">操作</TableHead>
-                        </TableRow>
-                    </TableHeader>
                     <TableBody>
                         {notifies.map((notify) => (
                             <TableRow key={notify.id}>
                                 <TableCell className="font-medium">
                                     {notify.name}
                                 </TableCell>
-                                <TableCell>
-                                    <Badge variant="secondary">
-                                        {notify.type}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell>
-                                    {formatTime(notify.created_at)}
-                                </TableCell>
-                                <TableCell>
-                                    {formatTime(notify.updated_at)}
+                                <TableCell className="font-medium">
+                                    {notify.type}
                                 </TableCell>
                                 <TableCell className="text-right">
                                     <div className="flex justify-end space-x-2">
@@ -106,22 +88,26 @@ export function NotifyList({
                                             onClick={() => onTest(notify)}
                                             disabled={testingId === notify.id}
                                         >
-                                            {testingId === notify.id ? '测试中...' : '测试'}
+                                            <Play className={`h-4 w-4 ${testingId === notify.id ? 'animate-spin' : ''}`} />
                                         </Button>
                                         <Button
                                             variant="outline"
                                             size="sm"
                                             onClick={() => onEdit(notify)}
                                         >
-                                            编辑
+                                            <Edit className="h-4 w-4" />
                                         </Button>
                                         <Button
-                                            variant="destructive"
+                                            variant="outline"
                                             size="sm"
                                             onClick={() => onDelete(notify.id)}
-                                            disabled={deletingId === notify.id}
+                                            className={deletingId === notify.id ? 'opacity-50' : ''}
                                         >
-                                            {deletingId === notify.id ? '删除中...' : '删除'}
+                                            {deletingId === notify.id ? (
+                                                <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                                            ) : (
+                                                <Trash2 className="h-4 w-4" />
+                                            )}
                                         </Button>
                                     </div>
                                 </TableCell>

@@ -66,11 +66,11 @@ export function NotifyPage() {
     }, [handleTest])
 
     return (
-        <div className="space-y-6">
+        <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
             {/* 页面标题和操作按钮 */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between px-4 lg:px-6">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">通知管理</h1>
+                    <h1 className="text-2xl font-bold">通知管理</h1>
                     <p className="text-muted-foreground">
                         管理通知配置，支持多种通知渠道
                     </p>
@@ -98,15 +98,17 @@ export function NotifyPage() {
             />
 
             {/* 通知列表 */}
-            <NotifyList
-                notifies={notifies}
-                isLoading={isLoading}
-                deletingId={deletingId}
-                testingId={testingId}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                onTest={handleTestNotify}
-            />
+            <div className="px-4 lg:px-6">
+                <NotifyList
+                    notifies={notifies}
+                    isLoading={isLoading}
+                    deletingId={deletingId}
+                    testingId={testingId}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    onTest={handleTestNotify}
+                />
+            </div>
         </div>
     )
 } 
