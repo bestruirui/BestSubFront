@@ -10,34 +10,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { DynamicConfigForm } from "@/components/ui/dynamic-config-form"
+import type { CheckResponse } from "@/lib/types/check"
 import type { DynamicConfigItem } from "@/lib/types/common"
-
-interface FormData {
-    name: string
-    type: string
-    url: string
-    timeout: number
-    cron_expr: string
-    enable: boolean
-    notify: boolean
-    notify_channel: number
-    log_write_file: boolean
-    log_level: string
-    sub_id: number[]
-    config: Record<string, unknown>
-}
+import type { SubNameAndID } from "@/lib/types/subscription"
+import type { CheckFormData } from "../hooks/useCheckForm"
 
 interface CheckFormProps {
-    formData: FormData
-    editingCheck: unknown
+    formData: CheckFormData
+    editingCheck: CheckResponse | null
     isDialogOpen: boolean
     checkTypes: string[]
     checkTypeConfigs: Record<string, DynamicConfigItem[]>
-    subList: Array<{ id: number; name: string }>
+    subList: SubNameAndID[]
     isLoadingTypes: boolean
     isLoadingConfigs: boolean
     isLoadingSubs: boolean
-    setFormData: React.Dispatch<React.SetStateAction<FormData>>
+    setFormData: React.Dispatch<React.SetStateAction<CheckFormData>>
     handleTypeChange: (type: string) => Promise<void>
     handleSubmit: (e: React.FormEvent) => void
     onOpenChange: (open: boolean) => void
@@ -220,6 +208,13 @@ export function CheckForm({
                                 <SelectValue placeholder={isLoadingTypes ? "加载中..." : "选择检测类型"} />
                             </SelectTrigger>
                             <SelectContent>
+                                {/* 编辑模式：确保当前type始终显示（即使checkTypes为空） */}
+                                {editingCheck && formData.type && !checkTypes.includes(formData.type) && (
+                                    <SelectItem value={formData.type}>
+                                        {formData.type.toUpperCase()} 检测
+                                    </SelectItem>
+                                )}
+                                {/* 所有可用的检测类型 */}
                                 {(checkTypes || []).map(type => (
                                     <SelectItem key={type} value={type}>
                                         {type.toUpperCase()} 检测

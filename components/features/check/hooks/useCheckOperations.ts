@@ -4,34 +4,37 @@
 
 import { useState, useCallback } from 'react'
 import { dashboardApi } from '@/lib/api/client'
+import { useConfirmDialog } from '@/lib/hooks'
 
 interface UseCheckOperationsProps {
     onSuccess: () => void
-    _user: unknown
 }
 
-export function useCheckOperations({ onSuccess, _user }: UseCheckOperationsProps) {
+export function useCheckOperations({ onSuccess }: UseCheckOperationsProps) {
     const [runningId, setRunningId] = useState<number | null>(null)
     const [deletingId, setDeletingId] = useState<number | null>(null)
 
+    // 使用公共的confirm dialog hook
+    const { confirmState, showDeleteConfirm, closeConfirm, handleConfirm } = useConfirmDialog()
+
     const getToken = useCallback(() => localStorage.getItem('access_token'), [])
 
-    const handleDelete = useCallback(async (id: number) => {
-        if (!confirm('确定要删除这个检测任务吗？')) return
+    const handleDelete = useCallback((id: number) => {
+        showDeleteConfirm('检测任务', async () => {
+            const token = getToken()
+            if (!token) return
 
-        const token = getToken()
-        if (!token) return
-
-        setDeletingId(id)
-        try {
-            await dashboardApi.deleteCheck(id, token)
-            onSuccess()
-        } catch (error) {
-            console.error('Failed to delete check:', error)
-        } finally {
-            setDeletingId(null)
-        }
-    }, [getToken, onSuccess])
+            setDeletingId(id)
+            try {
+                await dashboardApi.deleteCheck(id, token)
+                onSuccess()
+            } catch (error) {
+                console.error('Failed to delete check:', error)
+            } finally {
+                setDeletingId(null)
+            }
+        })
+    }, [getToken, onSuccess, showDeleteConfirm])
 
     const handleRun = useCallback(async (id: number) => {
         const token = getToken()
@@ -51,7 +54,10 @@ export function useCheckOperations({ onSuccess, _user }: UseCheckOperationsProps
     return {
         runningId,
         deletingId,
+        confirmState,
         handleDelete,
         handleRun,
+        closeConfirm,
+        handleConfirm,
     }
 } 

@@ -5,6 +5,7 @@ import type {
   ApiResponse,
   SubResponse,
   CheckResponse,
+  CheckRequest,
   HealthResponse,
   SubCreateRequest,
   SubUpdateRequest,
@@ -205,11 +206,11 @@ export const dashboardApi = {
   async deleteSubscription(id: number, token: string): Promise<void> {
     await apiClient.delete<ApiResponse<void>>(`${apiConfig.endpoints.sub}/${id}`, token)
   },
-  async createCheck<T = Record<string, unknown>>(data: T, token: string): Promise<CheckResponse> {
+  async createCheck(data: CheckRequest, token: string): Promise<CheckResponse> {
     const response = await apiClient.post<ApiResponse<CheckResponse>>(apiConfig.endpoints.check, data, token)
     return response.data
   },
-  async updateCheck<T = Record<string, unknown>>(id: number, data: T, token: string): Promise<CheckResponse> {
+  async updateCheck(id: number, data: CheckRequest, token: string): Promise<CheckResponse> {
     const response = await apiClient.put<ApiResponse<CheckResponse>>(`${apiConfig.endpoints.check}/${id}`, data, token)
     return response.data
   },

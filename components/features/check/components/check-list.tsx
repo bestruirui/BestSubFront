@@ -11,11 +11,22 @@ import { Play, Edit, Trash2 } from "lucide-react"
 import { getStatusBadgeConfig, formatCheckResultTime } from "@/lib/utils"
 import type { CheckResponse } from "@/lib/types/check"
 
+// 状态徽章组件
+function StatusBadge({ check }: { check: CheckResponse }) {
+    const config = getStatusBadgeConfig(check.status, check.enable)
+    return (
+        <Badge variant={config.variant} className={config.className}>
+            {config.text}
+        </Badge>
+    )
+}
+
 interface CheckListProps {
     checks: CheckResponse[]
     isLoading: boolean
     runningId: number | null
     deletingId: number | null
+    isLoadingEdit?: boolean
     onEdit: (check: CheckResponse) => void
     onDelete: (id: number) => void
     onRun: (id: number) => void
@@ -26,6 +37,7 @@ export function CheckList({
     isLoading,
     runningId,
     deletingId,
+    isLoadingEdit = false,
     onEdit,
     onDelete,
     onRun,
@@ -80,10 +92,7 @@ export function CheckList({
                                     </TableCell>
                                     <TableCell>
                                         <div className="space-y-2">
-                                            {(() => {
-                                                const config = getStatusBadgeConfig(check.status, check.enable)
-                                                return <Badge variant={config.variant} className={config.className}>{config.text}</Badge>
-                                            })()}
+                                            <StatusBadge check={check} />
                                             <div className="flex flex-col gap-1">
                                                 <Badge variant="outline" className="text-xs w-fit">
                                                     {check.task?.type?.toUpperCase() || 'N/A'}
@@ -123,7 +132,7 @@ export function CheckList({
                                                 size="sm"
                                                 variant="outline"
                                                 onClick={() => onRun(check.id)}
-                                                disabled={!check.enable || check.status === 'running' || runningId === check.id}
+                                                disabled={check.status === 'running' || runningId === check.id}
                                                 className={runningId === check.id ? 'opacity-50' : ''}
                                             >
                                                 <Play className={`h-4 w-4 ${runningId === check.id ? 'animate-spin' : ''}`} />
@@ -132,8 +141,14 @@ export function CheckList({
                                                 size="sm"
                                                 variant="outline"
                                                 onClick={() => onEdit(check)}
+                                                disabled={isLoadingEdit}
+                                                className={isLoadingEdit ? 'opacity-50' : ''}
                                             >
-                                                <Edit className="h-4 w-4" />
+                                                {isLoadingEdit ? (
+                                                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                                                ) : (
+                                                    <Edit className="h-4 w-4" />
+                                                )}
                                             </Button>
                                             <Button
                                                 size="sm"

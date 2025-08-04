@@ -1,4 +1,15 @@
 /**
+ * 检测请求类型
+ */
+export interface CheckRequest {
+    name: string
+    enable: boolean
+    task: CheckTask
+    config: Record<string, unknown>
+}
+
+
+/**
  * 检测结果类型
  */
 export interface CheckResult {

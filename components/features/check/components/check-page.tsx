@@ -11,6 +11,7 @@ import { useCheckForm } from "../hooks/useCheckForm"
 import { useCheckOperations } from "../hooks/useCheckOperations"
 import { CheckForm } from "./check-form"
 import { CheckList } from "./check-list"
+import { DialogContainer } from "@/components/ui/dialog-container"
 import type { CheckResponse } from "@/lib/types/check"
 
 export function CheckPage() {
@@ -48,22 +49,28 @@ export function CheckPage() {
         isLoadingTypes,
         isLoadingConfigs,
         isLoadingSubs,
+        isLoadingEdit,
         editingCheck,
         isDialogOpen,
+        alertState,
         setFormData,
         handleTypeChange,
         handleSubmit,
         handleEdit,
         openCreateDialog,
         closeDialog,
-    } = useCheckForm({ onSuccess: loadChecks, _user: user })
+        closeAlert,
+    } = useCheckForm({ onSuccess: loadChecks })
 
     const {
         runningId,
         deletingId,
+        confirmState,
         handleDelete,
         handleRun,
-    } = useCheckOperations({ onSuccess: loadChecks, _user: user })
+        closeConfirm,
+        handleConfirm,
+    } = useCheckOperations({ onSuccess: loadChecks })
 
     return (
         <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
@@ -103,11 +110,21 @@ export function CheckPage() {
                     isLoading={isLoading}
                     runningId={runningId}
                     deletingId={deletingId}
+                    isLoadingEdit={isLoadingEdit}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
                     onRun={handleRun}
                 />
             </div>
+
+            {/* 通用对话框容器 */}
+            <DialogContainer
+                alertState={alertState}
+                confirmState={confirmState}
+                onAlertClose={closeAlert}
+                onConfirmClose={closeConfirm}
+                onConfirmAction={handleConfirm}
+            />
         </div>
     )
 } 
