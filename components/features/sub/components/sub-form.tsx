@@ -1,7 +1,3 @@
-/**
- * 订阅表单组件
- */
-
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -9,7 +5,7 @@ import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { validateTimeout, validateUrl, validateCronExpr } from "@/lib/utils"
-import type { SubCreateRequest } from "@/lib/types/subscription"
+import type { SubCreateRequest } from "@/lib/types/sub"
 
 interface SubscriptionFormProps {
     formData: SubCreateRequest
@@ -32,7 +28,7 @@ export function SubscriptionForm({
 }: SubscriptionFormProps) {
     return (
         <Dialog open={isDialogOpen} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto scrollbar-hide">
                 <DialogHeader>
                     <DialogTitle>
                         {editingSubscription ? "编辑订阅" : "添加订阅"}
@@ -68,24 +64,7 @@ export function SubscriptionForm({
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <Label htmlFor="cron" className="mb-2 block">更新频率 (Cron)</Label>
-                            <Input
-                                id="cron"
-                                value={formData.cron_expr}
-                                onChange={(e) => updateFormField('cron_expr', e.target.value)}
-                                placeholder="0 */6 * * *"
-                                className={!validateCronExpr(formData.cron_expr) ? 'border-red-500' : ''}
-                            />
-                            {formData.cron_expr && !validateCronExpr(formData.cron_expr) && (
-                                <p className="text-xs text-red-500 mt-1">请输入有效的Cron表达式 (例如: 0 */6 * * *)</p>
-                            )}
-                            <p className="text-xs text-muted-foreground mt-2">
-                                默认每6小时更新一次
-                            </p>
-                        </div>
-
-                        <div>
-                            <Label htmlFor="timeout" className="mb-2 block">超时时间 (秒)</Label>
+                            <Label htmlFor="timeout" className="mb-2 block">超时时间(秒)</Label>
                             <Input
                                 id="timeout"
                                 type="number"
@@ -95,13 +74,18 @@ export function SubscriptionForm({
                                 min="1"
                                 max="300"
                             />
-                            {((formData.config.timeout || 0) < 1 || (formData.config.timeout || 0) > 300) && (
-                                <p className="text-xs text-red-500 mt-1">请输入1-300之间的数字</p>
-                            )}
-                            <p className="text-xs text-muted-foreground mt-2">
-                                默认10秒
-                            </p>
                         </div>
+                        <div>
+                            <Label htmlFor="cron" className="mb-2 block">更新频率</Label>
+                            <Input
+                                id="cron"
+                                value={formData.cron_expr}
+                                onChange={(e) => updateFormField('cron_expr', e.target.value)}
+                                placeholder="0 */6 * * *"
+                                className={!validateCronExpr(formData.cron_expr) ? 'border-red-500' : ''}
+                            />
+                        </div>
+
                     </div>
 
                     <div className="w-full">

@@ -1,18 +1,15 @@
-/**
- * 订阅管理主页面组件
- */
-
 import { useEffect, useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { dashboardApi } from "@/lib/api/client"
 import { useAuth } from "@/components/providers/auth-provider"
-import { useSubscriptionForm } from "../hooks/useSubscriptionForm"
-import { useSubscriptionOperations } from "../hooks/useSubscriptionOperations"
-import { SubscriptionForm } from "./subscription-form"
-import { SubscriptionDetail } from "./subscription-detail"
-import { SubscriptionList } from "./subscription-list"
-import type { SubResponse } from "@/lib/types/subscription"
+import { useSubscriptionForm } from "../hooks/useSubForm"
+import { useSubscriptionOperations } from "../hooks/useSubOperations"
+import { SubscriptionForm } from "./sub-form"
+import { SubscriptionDetail } from "./sub-detail"
+import { SubscriptionList } from "./sub-list"
+import { DialogContainer } from "@/components/ui/dialog-container"
+import type { SubResponse } from "@/lib/types/sub"
 
 export function SubscriptionPage() {
     const [subscriptions, setSubscriptions] = useState<SubResponse[]>([])
@@ -42,25 +39,30 @@ export function SubscriptionPage() {
         loadSubscriptions()
     }, [loadSubscriptions])
 
-    // 使用自定义Hooks
     const {
         formData,
         editingSubscription,
         isDialogOpen,
+        isLoadingEdit,
+        alertState,
         updateFormField,
         updateConfigField,
         handleSubmit,
         handleEdit,
         openCreateDialog,
         closeDialog,
-    } = useSubscriptionForm({ onSuccess: loadSubscriptions, _user: user })
+        closeAlert,
+    } = useSubscriptionForm({ onSuccess: loadSubscriptions })
 
     const {
         refreshingId,
         deletingId,
+        confirmState,
         handleDelete,
         handleRefresh,
-    } = useSubscriptionOperations({ onSuccess: loadSubscriptions, _user: user })
+        closeConfirm,
+        handleConfirm,
+    } = useSubscriptionOperations({ onSuccess: loadSubscriptions })
 
     const showDetail = (subscription: SubResponse) => {
         setDetailSubscription(subscription)
@@ -72,7 +74,6 @@ export function SubscriptionPage() {
             <div className="flex items-center justify-between px-4 lg:px-6">
                 <div>
                     <h1 className="text-2xl font-bold">订阅管理</h1>
-                    <p className="text-muted-foreground">管理您的订阅链接</p>
                 </div>
 
                 <Button onClick={openCreateDialog}>
@@ -81,7 +82,6 @@ export function SubscriptionPage() {
                 </Button>
             </div>
 
-            {/* 订阅表单 */}
             <SubscriptionForm
                 formData={formData}
                 editingSubscription={editingSubscription}
@@ -92,26 +92,33 @@ export function SubscriptionPage() {
                 onOpenChange={closeDialog}
             />
 
-            {/* 订阅详情 */}
-            <SubscriptionDetail
-                subscription={detailSubscription}
-                isOpen={isDetailDialogOpen}
-                onOpenChange={setIsDetailDialogOpen}
-            />
-
-            {/* 订阅列表 */}
             <div className="px-4 lg:px-6">
                 <SubscriptionList
                     subscriptions={subscriptions}
                     isLoading={isLoading}
                     refreshingId={refreshingId}
                     deletingId={deletingId}
+                    isLoadingEdit={isLoadingEdit}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
                     onRefresh={handleRefresh}
                     onShowDetail={showDetail}
                 />
             </div>
+
+            <SubscriptionDetail
+                subscription={detailSubscription}
+                isOpen={isDetailDialogOpen}
+                onOpenChange={setIsDetailDialogOpen}
+            />
+
+            <DialogContainer
+                alertState={alertState}
+                confirmState={confirmState}
+                onAlertClose={closeAlert}
+                onConfirmClose={closeConfirm}
+                onConfirmAction={handleConfirm}
+            />
         </div>
     )
 } 

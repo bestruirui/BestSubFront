@@ -1,7 +1,7 @@
 import { Route } from '@/lib/router/router'
 
 import { DashboardPage } from '@/components/pages/home/dashboard'
-import { SubscriptionPage } from '@/components/features/subscription'
+import { SubscriptionPage } from '@/components/features/sub'
 import { CheckPage } from '@/components/features/check'
 import { SharesPage } from '@/components/pages/share/share'
 import { StoragePage } from '@/components/pages/storage/storage'

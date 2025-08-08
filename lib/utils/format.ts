@@ -27,59 +27,30 @@ export function formatDuration(milliseconds: number): string {
     }
 }
 
-/**
- * 获取通用状态对应的Badge样式和文本
- */
-export function getStatusBadgeConfig(status: string, enable: boolean): {
-    variant: "default" | "secondary" | "destructive" | "outline"
-    className: string
-    text: string
-} {
-    if (!enable) {
-        return {
-            variant: "secondary",
-            className: "",
-            text: "已停用"
-        }
-    }
 
-    const statusConfig: Record<string, {
-        variant: "default" | "secondary" | "destructive" | "outline"
-        className: string
-        text: string
-    }> = {
-        // 检测任务状态
-        'success': { variant: 'default', className: 'bg-green-500 hover:bg-green-600', text: '成功' },
-        'running': { variant: 'default', className: 'bg-blue-500 hover:bg-blue-600', text: '运行中' },
-        'failed': { variant: 'destructive', className: '', text: '失败' },
-        'pending': { variant: 'outline', className: '', text: '等待中' },
-
-        // 订阅任务状态
-        'scheduled': { variant: 'default', className: 'bg-green-500 hover:bg-green-600', text: '已调度' },
-        'disabled': { variant: 'secondary', className: '', text: '已停用' },
-    }
-
-    const config = statusConfig[status]
-    if (!config) {
-        return {
-            variant: "outline",
-            className: "",
-            text: status || "未知"
-        }
-    }
-
-    return config
-}
 
 /**
- * 格式化检测结果时间
+ * 格式化最后运行时间（通用）
  */
-export function formatCheckResultTime(lastRun: string | undefined): string {
+export function formatLastRunTime(lastRun: string | undefined): string {
     if (!lastRun) return '从未运行'
 
+    // 检查是否为零时间
+    const zeroTimePatterns = [
+        '0001-01-01T00:00:00Z',
+        '0001-01-01T00:00:00.000Z',
+        '1970-01-01T00:00:00Z',
+        '1970-01-01T00:00:00.000Z'
+    ]
+
+    if (zeroTimePatterns.includes(lastRun)) {
+        return '从未运行'
+    }
+
     try {
-        return new Date(lastRun).toLocaleString()
+        return new Date(lastRun).toLocaleString('zh-CN')
     } catch {
         return '时间格式错误'
     }
-} 
+}
+

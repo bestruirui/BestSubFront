@@ -22,7 +22,7 @@ async function preloadComponent(path: string): Promise<unknown> {
                 importPromise = import('@/components/pages/home/dashboard')
                 break
             case '/subscriptions':
-                importPromise = import('@/components/features/subscription')
+                importPromise = import('@/components/features/sub')
                 break
             case '/checks':
                 importPromise = import('@/components/features/check')

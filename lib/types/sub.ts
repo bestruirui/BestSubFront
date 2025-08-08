@@ -40,7 +40,6 @@ export interface SubResult {
     fail: number
     msg: string
     raw_count: number
-    count: number
     last_run: string
     duration: number
 }
@@ -49,8 +48,7 @@ export interface SubResult {
  * 订阅节点信息类型
  */
 export interface SubNodeInfo {
-    raw_count: number
-    alive_count: number
+    count: number
     speed_up: number
     speed_down: number
     delay: number
@@ -69,7 +67,7 @@ export interface SubResponse {
     created_at: string
     updated_at: string
     result: SubResult
-    node_info: SubNodeInfo
+    info: SubNodeInfo
     config: SubConfig
 }
 

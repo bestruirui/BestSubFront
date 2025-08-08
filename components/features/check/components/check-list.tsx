@@ -1,25 +1,12 @@
-/**
- * 检测列表组件
- */
-
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table"
 import { InlineLoading } from "@/components/ui/loading"
 import { Play, Edit, Trash2 } from "lucide-react"
-import { getStatusBadgeConfig, formatCheckResultTime } from "@/lib/utils"
+import { formatLastRunTime } from "@/lib/utils"
+import StatusBadge from "@/components/shared/status-badge"
 import type { CheckResponse } from "@/lib/types/check"
-
-// 状态徽章组件
-function StatusBadge({ check }: { check: CheckResponse }) {
-    const config = getStatusBadgeConfig(check.status, check.enable)
-    return (
-        <Badge variant={config.variant} className={config.className}>
-            {config.text}
-        </Badge>
-    )
-}
 
 interface CheckListProps {
     checks: CheckResponse[]
@@ -28,7 +15,7 @@ interface CheckListProps {
     deletingId: number | null
     isLoadingEdit?: boolean
     onEdit: (check: CheckResponse) => void
-    onDelete: (id: number) => void
+    onDelete: (id: number, name: string) => void
     onRun: (id: number) => void
 }
 
@@ -73,13 +60,13 @@ export function CheckList({
     return (
         <Card>
             <CardHeader>
-                <CardTitle>检测任务列表</CardTitle>
+                <CardTitle>检测任务</CardTitle>
             </CardHeader>
             <CardContent>
                 <Table>
                     <TableBody>
                         {checks
-                            .sort((a, b) => a.id - b.id) // 根据ID升序排序
+                            .sort((a, b) => a.id - b.id)
                             .map((check) => (
                                 <TableRow key={check.id}>
                                     <TableCell>
@@ -92,7 +79,7 @@ export function CheckList({
                                     </TableCell>
                                     <TableCell>
                                         <div className="space-y-2">
-                                            <StatusBadge check={check} />
+                                            <StatusBadge status={check.status} enable={check.enable} />
                                             <div className="flex flex-col gap-1">
                                                 <Badge variant="outline" className="text-xs w-fit">
                                                     {check.task?.type?.toUpperCase() || 'N/A'}
@@ -116,7 +103,7 @@ export function CheckList({
                                     <TableCell>
                                         <div className="space-y-1">
                                             <div className="text-xs">
-                                                最后运行: <span className="text-muted-foreground">{formatCheckResultTime(check.result?.last_run)}</span>
+                                                最后运行: <span className="text-muted-foreground">{formatLastRunTime(check.result?.last_run)}</span>
                                             </div>
                                             <div className="text-xs">
                                                 执行时长: <span className="text-muted-foreground">{check.result?.duration || 0}ms</span>
@@ -153,7 +140,7 @@ export function CheckList({
                                             <Button
                                                 size="sm"
                                                 variant="outline"
-                                                onClick={() => onDelete(check.id)}
+                                                onClick={() => onDelete(check.id, check.name)}
                                                 disabled={deletingId === check.id}
                                                 className={deletingId === check.id ? 'opacity-50' : ''}
                                             >

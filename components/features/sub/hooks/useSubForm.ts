@@ -1,15 +1,11 @@
-/**
- * 订阅表单相关的自定义Hook
- */
-
 import { useState, useCallback } from 'react'
 import { dashboardApi } from '@/lib/api/client'
-import { validateSubscriptionForm } from '@/lib/utils'
-import type { SubResponse, SubCreateRequest } from '@/lib/types/subscription'
+import { validateUrl, validateCronExpr } from '@/lib/utils'
+import { useAlertDialog, useFormUpdate } from '@/lib/hooks'
+import type { SubResponse, SubCreateRequest } from '@/lib/types/sub'
 
 interface UseSubscriptionFormProps {
     onSuccess: () => void
-    _user: unknown
 }
 
 const DEFAULT_FORM_DATA: SubCreateRequest = {
@@ -24,45 +20,68 @@ const DEFAULT_FORM_DATA: SubCreateRequest = {
     },
 }
 
-export function useSubscriptionForm({ onSuccess, _user }: UseSubscriptionFormProps) {
+function validateSubscriptionForm(data: SubCreateRequest): { isValid: boolean; errors: string[] } {
+    const errors: string[] = []
+
+    if (!data.name.trim()) {
+        errors.push('请输入订阅名称')
+    }
+
+    if (!validateUrl(data.config.url)) {
+        errors.push('请输入有效的订阅链接')
+    }
+
+    if (!validateCronExpr(data.cron_expr)) {
+        errors.push('请输入有效的Cron表达式')
+    }
+
+    return {
+        isValid: errors.length === 0,
+        errors
+    }
+}
+
+export function useSubscriptionForm({ onSuccess }: UseSubscriptionFormProps) {
     const [formData, setFormData] = useState<SubCreateRequest>(DEFAULT_FORM_DATA)
     const [editingSubscription, setEditingSubscription] = useState<SubResponse | null>(null)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [isLoadingEdit, setIsLoadingEdit] = useState(false)
+
+    const { alertState, showError, closeAlert } = useAlertDialog()
+
+    const { updateFormField, updateConfigField } = useFormUpdate(setFormData)
 
     const getToken = useCallback(() => localStorage.getItem('access_token'), [])
 
-    // 优化的表单更新函数
-    const updateFormField = useCallback((field: keyof SubCreateRequest, value: string | boolean) => {
-        setFormData(prev => ({ ...prev, [field]: value }))
-    }, [])
 
-    const updateConfigField = useCallback((field: keyof SubCreateRequest['config'], value: string | boolean | number) => {
-        setFormData(prev => ({
-            ...prev,
-            config: { ...prev.config, [field]: value }
-        }))
-    }, [])
 
     const handleSubmit = useCallback(async (e: React.FormEvent) => {
         e.preventDefault()
 
         const validation = validateSubscriptionForm(formData)
         if (!validation.isValid) {
-            alert(validation.errors.join('\n'))
+            showError('表单验证失败', validation.errors.join('\n'))
             return
         }
 
         const token = getToken()
         if (!token) {
-            alert('请先登录')
+            showError('登录状态无效', '请先登录')
             return
         }
 
         try {
+            const submitData: SubCreateRequest = {
+                name: formData.name,
+                enable: formData.enable,
+                cron_expr: formData.cron_expr,
+                config: formData.config,
+            }
+
             if (editingSubscription) {
-                await dashboardApi.updateSubscription(editingSubscription.id, formData, token)
+                await dashboardApi.updateSubscription(editingSubscription.id, submitData, token)
             } else {
-                await dashboardApi.createSubscription(formData, token)
+                await dashboardApi.createSubscription(submitData, token)
             }
 
             setIsDialogOpen(false)
@@ -71,11 +90,12 @@ export function useSubscriptionForm({ onSuccess, _user }: UseSubscriptionFormPro
             onSuccess()
         } catch (error) {
             console.error('Failed to save subscription:', error)
-            alert('保存失败，请重试')
+            showError('保存失败', '请重试')
         }
-    }, [formData, editingSubscription, getToken, onSuccess])
+    }, [formData, editingSubscription, getToken, onSuccess, showError])
 
     const handleEdit = useCallback((subscription: SubResponse) => {
+        setIsLoadingEdit(true)
         setEditingSubscription(subscription)
         setFormData({
             name: subscription.name,
@@ -89,9 +109,8 @@ export function useSubscriptionForm({ onSuccess, _user }: UseSubscriptionFormPro
             },
         })
         setIsDialogOpen(true)
+        setIsLoadingEdit(false)
     }, [])
-
-    // 移除未使用的resetForm函数
 
     const openCreateDialog = useCallback(() => {
         setEditingSubscription(null)
@@ -109,11 +128,14 @@ export function useSubscriptionForm({ onSuccess, _user }: UseSubscriptionFormPro
         formData,
         editingSubscription,
         isDialogOpen,
+        isLoadingEdit,
+        alertState,
         updateFormField,
         updateConfigField,
         handleSubmit,
         handleEdit,
         openCreateDialog,
         closeDialog,
+        closeAlert,
     }
 } 

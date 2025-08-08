@@ -1,7 +1,3 @@
-/**
- * 检测管理主页面组件
- */
-
 import { useEffect, useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
@@ -40,7 +36,6 @@ export function CheckPage() {
         loadChecks()
     }, [loadChecks])
 
-    // 使用自定义Hooks
     const {
         formData,
         checkTypes,
@@ -53,7 +48,8 @@ export function CheckPage() {
         editingCheck,
         isDialogOpen,
         alertState,
-        setFormData,
+        updateFormField,
+        updateConfigField,
         handleTypeChange,
         handleSubmit,
         handleEdit,
@@ -77,7 +73,6 @@ export function CheckPage() {
             <div className="flex items-center justify-between px-4 lg:px-6">
                 <div>
                     <h1 className="text-2xl font-bold">检测任务</h1>
-                    <p className="text-muted-foreground">管理您的检测任务</p>
                 </div>
 
                 <Button onClick={openCreateDialog}>
@@ -86,7 +81,6 @@ export function CheckPage() {
                 </Button>
             </div>
 
-            {/* 检测表单 */}
             <CheckForm
                 formData={formData}
                 editingCheck={editingCheck}
@@ -97,13 +91,13 @@ export function CheckPage() {
                 isLoadingTypes={isLoadingTypes}
                 isLoadingConfigs={isLoadingConfigs}
                 isLoadingSubs={isLoadingSubs}
-                setFormData={setFormData}
+                updateFormField={updateFormField}
+                updateConfigField={updateConfigField}
                 handleTypeChange={handleTypeChange}
                 handleSubmit={handleSubmit}
                 onOpenChange={closeDialog}
             />
 
-            {/* 检测列表 */}
             <div className="px-4 lg:px-6">
                 <CheckList
                     checks={checks}
@@ -117,7 +111,6 @@ export function CheckPage() {
                 />
             </div>
 
-            {/* 通用对话框容器 */}
             <DialogContainer
                 alertState={alertState}
                 confirmState={confirmState}

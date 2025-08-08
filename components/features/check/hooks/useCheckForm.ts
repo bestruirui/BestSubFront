@@ -1,22 +1,11 @@
-/**
- * 检测表单相关的自定义Hook
- */
-
 import { useState, useCallback } from 'react'
 import { dashboardApi } from '@/lib/api/client'
-import { validateCheckForm } from '@/lib/utils'
-import { useAlertDialog } from '@/lib/hooks'
+import { validateCronExpr } from '@/lib/utils'
+import { useAlertDialog, useFormUpdate } from '@/lib/hooks'
 import type { CheckResponse, CheckRequest } from '@/lib/types/check'
 import type { DynamicConfigItem } from '@/lib/types/common'
-import type { SubNameAndID } from '@/lib/types/subscription'
+import type { SubNameAndID } from '@/lib/types/sub'
 
-// 常量定义
-const DEFAULT_TIMEOUT = 30
-const DEFAULT_CRON_EXPR = "0 */5 * * *"
-const DEFAULT_NOTIFY_CHANNEL = 1
-const DEFAULT_LOG_LEVEL = "info"
-
-// 工具函数：处理配置默认值
 const processConfigDefaults = (config: Record<string, unknown>, configs: DynamicConfigItem[]): Record<string, unknown> => {
     const processedConfig = { ...config }
     configs.forEach(configItem => {
@@ -28,43 +17,59 @@ const processConfigDefaults = (config: Record<string, unknown>, configs: Dynamic
     return processedConfig
 }
 
-// 扁平化的表单数据类型，用于表单处理
-interface CheckFormData {
-    name: string
-    enable: boolean
-    // CheckTask 字段扁平化
-    type: string
-    timeout: number
-    cron_expr: string
-    notify: boolean
-    notify_channel: number
-    log_write_file: boolean
-    log_level: string
-    sub_id: number[]
-    // 配置数据
-    config: Record<string, unknown>
-}
+
 
 interface UseCheckFormProps {
     onSuccess: () => void
 }
 
-const DEFAULT_FORM_DATA: CheckFormData = {
+const DEFAULT_FORM_DATA: CheckRequest = {
     name: "",
     enable: true,
-    type: "",
-    timeout: DEFAULT_TIMEOUT,
-    cron_expr: DEFAULT_CRON_EXPR,
-    notify: true,
-    notify_channel: DEFAULT_NOTIFY_CHANNEL,
-    log_write_file: true,
-    log_level: DEFAULT_LOG_LEVEL,
-    sub_id: [],
+    task: {
+        type: "",
+        timeout: 30,
+        cron_expr: "0 */5 * * *",
+        notify: true,
+        notify_channel: 1,
+        log_write_file: true,
+        log_level: "info",
+        sub_id: [],
+    },
     config: {},
 }
 
+function validateCheckForm(formData: CheckRequest): { isValid: boolean; errors: string[] } {
+    const errors: string[] = []
+
+    if (!formData.name.trim()) {
+        errors.push('任务名称不能为空')
+    }
+
+    if (!formData.task.type) {
+        errors.push('请选择检测类型')
+    }
+
+    if (formData.task.timeout < 1 || formData.task.timeout > 300) {
+        errors.push('超时时间必须在1-300秒之间')
+    }
+
+    if (!validateCronExpr(formData.task.cron_expr)) {
+        errors.push('请输入有效的Cron表达式')
+    }
+
+    if (formData.task.notify_channel < 1) {
+        errors.push('通知渠道必须大于0')
+    }
+
+    return {
+        isValid: errors.length === 0,
+        errors
+    }
+}
+
 export function useCheckForm({ onSuccess }: UseCheckFormProps) {
-    const [formData, setFormData] = useState<CheckFormData>(DEFAULT_FORM_DATA)
+    const [formData, setFormData] = useState<CheckRequest>(DEFAULT_FORM_DATA)
     const [checkTypes, setCheckTypes] = useState<string[]>([])
     const [checkTypeConfigs, setCheckTypeConfigs] = useState<Record<string, DynamicConfigItem[]>>({})
     const [subList, setSubList] = useState<SubNameAndID[]>([])
@@ -75,8 +80,9 @@ export function useCheckForm({ onSuccess }: UseCheckFormProps) {
     const [editingCheck, setEditingCheck] = useState<CheckResponse | null>(null)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-    // 使用公共的alert dialog hook
     const { alertState, showError, closeAlert } = useAlertDialog()
+
+    const { updateFormField, updateConfigField } = useFormUpdate(setFormData)
 
     const getToken = useCallback(() => localStorage.getItem('access_token'), [])
 
@@ -133,7 +139,7 @@ export function useCheckForm({ onSuccess }: UseCheckFormProps) {
     }, [getToken])
 
     const handleTypeChange = useCallback(async (type: string) => {
-        setFormData(prev => ({ ...prev, type, config: {} }))
+        setFormData(prev => ({ ...prev, task: { ...prev.task, type }, config: {} }))
         if (type && !checkTypeConfigs[type]) {
             await loadCheckTypeConfig(type)
         }
@@ -155,23 +161,21 @@ export function useCheckForm({ onSuccess }: UseCheckFormProps) {
         }
 
         try {
-            // 处理配置数据，将空值替换为 default 值
-            const configs = checkTypeConfigs[formData.type] || []
+            const configs = checkTypeConfigs[formData.task.type] || []
             const processedConfig = processConfigDefaults(formData.config, configs)
 
-            // 构造符合 CheckRequest 格式的数据
             const submitData: CheckRequest = {
                 name: formData.name,
                 enable: formData.enable,
                 task: {
-                    type: formData.type,
-                    timeout: formData.timeout,
-                    cron_expr: formData.cron_expr,
-                    notify: formData.notify,
-                    notify_channel: formData.notify_channel,
-                    log_write_file: formData.log_write_file,
-                    log_level: formData.log_level,
-                    sub_id: formData.sub_id,
+                    type: formData.task.type,
+                    timeout: formData.task.timeout,
+                    cron_expr: formData.task.cron_expr,
+                    notify: formData.task.notify,
+                    notify_channel: formData.task.notify_channel,
+                    log_write_file: formData.task.log_write_file,
+                    log_level: formData.task.log_level,
+                    sub_id: formData.task.sub_id,
                 },
                 config: processedConfig,
             }
@@ -196,41 +200,35 @@ export function useCheckForm({ onSuccess }: UseCheckFormProps) {
         try {
             setIsLoadingEdit(true)
             setEditingCheck(check)
-            
-            // 获取检测类型（项目中已有，无需重新请求type列表）
+
             const checkType = check.task?.type || ""
-            
-            // 先设置表单数据（包含已有的type）
+
             setFormData({
                 name: check.name,
                 enable: check.enable,
-                type: checkType,
-                timeout: check.task?.timeout || DEFAULT_TIMEOUT,
-                cron_expr: check.task?.cron_expr || DEFAULT_CRON_EXPR,
-                notify: check.task?.notify || true,
-                notify_channel: check.task?.notify_channel || DEFAULT_NOTIFY_CHANNEL,
-                log_write_file: check.task?.log_write_file || true,
-                log_level: check.task?.log_level || DEFAULT_LOG_LEVEL,
-                sub_id: check.task?.sub_id || [],
+                task: {
+                    type: checkType,
+                    timeout: check.task?.timeout || 30,
+                    cron_expr: check.task?.cron_expr || "0 */5 * * *",
+                    notify: check.task?.notify || true,
+                    notify_channel: check.task?.notify_channel || 1,
+                    log_write_file: check.task?.log_write_file || true,
+                    log_level: check.task?.log_level || "info",
+                    sub_id: check.task?.sub_id || [],
+                },
                 config: check.config || {},
             })
-            
-            // 并行加载必要数据
+
             const loadPromises = []
-            
-            // 加载订阅列表（如果需要）
+
             if (subList.length === 0) {
                 loadPromises.push(loadSubList())
             }
-            
-            // 加载该检测类型的配置项（如果需要）
             if (checkType && !checkTypeConfigs[checkType]) {
                 loadPromises.push(loadCheckTypeConfig(checkType))
             }
-            
-            // 等待数据加载完成
             await Promise.all(loadPromises)
-            
+
             setIsDialogOpen(true)
         } catch (error) {
             console.error('Failed to load edit data:', error)
@@ -245,7 +243,6 @@ export function useCheckForm({ onSuccess }: UseCheckFormProps) {
         setFormData(DEFAULT_FORM_DATA)
         setIsDialogOpen(true)
 
-        // 预加载数据
         if (checkTypes.length === 0) {
             await loadCheckTypes()
         }
@@ -260,6 +257,8 @@ export function useCheckForm({ onSuccess }: UseCheckFormProps) {
         setFormData(DEFAULT_FORM_DATA)
     }, [])
 
+
+
     return {
         formData,
         checkTypes,
@@ -273,6 +272,8 @@ export function useCheckForm({ onSuccess }: UseCheckFormProps) {
         isDialogOpen,
         alertState,
         setFormData,
+        updateFormField,
+        updateConfigField,
         handleTypeChange,
         handleSubmit,
         handleEdit,
@@ -282,5 +283,3 @@ export function useCheckForm({ onSuccess }: UseCheckFormProps) {
     }
 }
 
-// 导出类型供其他组件使用
-export type { CheckFormData } 

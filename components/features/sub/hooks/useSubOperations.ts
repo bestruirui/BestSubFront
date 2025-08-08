@@ -1,13 +1,12 @@
 import { useState, useCallback } from 'react'
 import { dashboardApi } from '@/lib/api/client'
 import { useConfirmDialog } from '@/lib/hooks'
-
-interface UseCheckOperationsProps {
+interface UseSubscriptionOperationsProps {
     onSuccess: () => void
 }
 
-export function useCheckOperations({ onSuccess }: UseCheckOperationsProps) {
-    const [runningId, setRunningId] = useState<number | null>(null)
+export function useSubscriptionOperations({ onSuccess }: UseSubscriptionOperationsProps) {
+    const [refreshingId, setRefreshingId] = useState<number | null>(null)
     const [deletingId, setDeletingId] = useState<number | null>(null)
 
     const { confirmState, showDeleteConfirm, closeConfirm, handleConfirm } = useConfirmDialog()
@@ -21,37 +20,37 @@ export function useCheckOperations({ onSuccess }: UseCheckOperationsProps) {
 
             setDeletingId(id)
             try {
-                await dashboardApi.deleteCheck(id, token)
+                await dashboardApi.deleteSubscription(id, token)
                 onSuccess()
             } catch (error) {
-                console.error('Failed to delete check:', error)
+                console.error('Failed to delete subscription:', error)
             } finally {
                 setDeletingId(null)
             }
         })
     }, [getToken, onSuccess, showDeleteConfirm])
 
-    const handleRun = useCallback(async (id: number) => {
+    const handleRefresh = useCallback(async (id: number) => {
         const token = getToken()
         if (!token) return
 
-        setRunningId(id)
+        setRefreshingId(id)
         try {
-            await dashboardApi.runCheck(id, token)
+            await dashboardApi.refreshSubscription(id, token)
             onSuccess()
         } catch (error) {
-            console.error('Failed to run check:', error)
+            console.error('Failed to refresh subscription:', error)
         } finally {
-            setRunningId(null)
+            setRefreshingId(null)
         }
     }, [getToken, onSuccess])
 
     return {
-        runningId,
+        refreshingId,
         deletingId,
         confirmState,
         handleDelete,
-        handleRun,
+        handleRefresh,
         closeConfirm,
         handleConfirm,
     }
