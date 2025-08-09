@@ -21,7 +21,7 @@ interface CheckFormProps {
     isLoadingTypes: boolean
     isLoadingConfigs: boolean
     isLoadingSubs: boolean
-    updateFormField: (field: string, value: any) => void
+    updateFormField: (field: string, value: unknown) => void
     updateConfigField: (field: string, value: unknown) => void
     handleTypeChange: (type: string) => Promise<void>
     handleSubmit: (e: React.FormEvent) => void

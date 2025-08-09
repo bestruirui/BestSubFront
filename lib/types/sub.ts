@@ -1,10 +1,3 @@
-/**
- * 订阅相关类型定义
- */
-
-/**
- * 订阅配置类型
- */
 export interface SubConfig {
     url: string
     proxy?: boolean
@@ -12,29 +5,14 @@ export interface SubConfig {
     type?: 'clash' | 'singbox' | 'base64' | 'v2ray' | 'auto'
 }
 
-/**
- * 创建订阅请求类型
- */
-export interface SubCreateRequest {
+export interface SubRequest {
     name: string
     enable: boolean
     cron_expr: string
     config: SubConfig
 }
 
-/**
- * 更新订阅请求类型
- */
-export interface SubUpdateRequest {
-    name: string
-    enable: boolean
-    cron_expr: string
-    config: SubConfig
-}
 
-/**
- * 订阅结果类型
- */
 export interface SubResult {
     success: number
     fail: number
@@ -44,9 +22,6 @@ export interface SubResult {
     duration: number
 }
 
-/**
- * 订阅节点信息类型
- */
 export interface SubNodeInfo {
     count: number
     speed_up: number
@@ -55,9 +30,6 @@ export interface SubNodeInfo {
     risk: number
 }
 
-/**
- * 订阅响应类型
- */
 export interface SubResponse {
     id: number
     name: string
@@ -71,9 +43,6 @@ export interface SubResponse {
     config: SubConfig
 }
 
-/**
- * 订阅名称和ID类型
- */
 export interface SubNameAndID {
     id: number
     name: string

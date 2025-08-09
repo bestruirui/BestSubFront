@@ -1,6 +1,3 @@
-/**
- * 检测请求类型
- */
 export interface CheckRequest {
     name: string
     enable: boolean
@@ -9,9 +6,6 @@ export interface CheckRequest {
 }
 
 
-/**
- * 检测结果类型
- */
 export interface CheckResult {
     duration: number
     extra: Record<string, unknown>
@@ -19,9 +13,6 @@ export interface CheckResult {
     msg: string
 }
 
-/**
- * 检测任务类型
- */
 export interface CheckTask {
     cron_expr: string
     log_level: string
@@ -33,9 +24,6 @@ export interface CheckTask {
     sub_id: number[]
 }
 
-/**
- * 检测响应类型
- */
 export interface CheckResponse {
     id: number
     name: string

@@ -5,14 +5,14 @@ import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { validateTimeout, validateUrl, validateCronExpr } from "@/lib/utils"
-import type { SubCreateRequest } from "@/lib/types/sub"
+import type { SubRequest } from "@/lib/types/sub"
 
 interface SubscriptionFormProps {
-    formData: SubCreateRequest
+    formData: SubRequest
     editingSubscription: unknown
     isDialogOpen: boolean
-    updateFormField: (field: keyof SubCreateRequest, value: string | boolean) => void
-    updateConfigField: (field: keyof SubCreateRequest['config'], value: string | boolean | number) => void
+    updateFormField: (field: keyof SubRequest, value: string | boolean) => void
+    updateConfigField: (field: keyof SubRequest['config'], value: string | boolean | number) => void
     handleSubmit: (e: React.FormEvent) => void
     onOpenChange: (open: boolean) => void
 }

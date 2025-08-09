@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback } from 'react'
-import { useSubscriptionStore, useSubscriptionStats } from '@/lib/stores/subscription-store'
 import { dashboardApi } from '@/lib/api/client'
 import type { CheckResponse } from '@/lib/types/check'
 
@@ -22,12 +21,10 @@ function useCheckStats(checks: CheckResponse[]) {
 }
 
 export function useDashboardData() {
-  const [subscriptionState, subscriptionActions] = useSubscriptionStore()
   const [checkData, setCheckData] = useState<CheckResponse[]>([])
   const [checkLoading, setCheckLoading] = useState(false)
   const [checkError, setCheckError] = useState<string | null>(null)
 
-  const subscriptionStats = useSubscriptionStats(subscriptionState.data)
   const checkStats = useCheckStats(checkData)
 
   const loadChecks = useCallback(async () => {
@@ -49,17 +46,10 @@ export function useDashboardData() {
   }, [])
 
   useEffect(() => {
-    if (!subscriptionState.initialized) {
-      subscriptionActions.load()
-    }
-  }, [subscriptionState.initialized, subscriptionActions])
-
-  useEffect(() => {
     loadChecks()
   }, [loadChecks])
 
   return {
-    subscriptionState,
     checkState: {
       data: checkData,
       loading: checkLoading,
@@ -67,15 +57,13 @@ export function useDashboardData() {
       initialized: true
     },
 
-    subscriptionStats,
     checkStats,
 
-    isLoading: subscriptionState.loading || checkLoading,
+    isLoading: checkLoading,
 
-    error: subscriptionState.error || checkError,
+    error: checkError,
 
     actions: {
-      subscription: subscriptionActions,
       check: { load: loadChecks },
     }
   }

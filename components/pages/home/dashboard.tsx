@@ -26,10 +26,8 @@ function StatsSkeleton() {
 }
 
 function StatsCards({
-  subscriptionStats,
   checkStats
 }: {
-  subscriptionStats: any
   checkStats: any
 }) {
   return (
@@ -40,9 +38,9 @@ function StatsCards({
           <TrendingUp className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{subscriptionStats.total}</div>
+          <div className="text-2xl font-bold">{checkStats.total}</div>
           <p className="text-xs text-muted-foreground">
-            {subscriptionStats.active} 个已启用
+            {checkStats.active} 个已启用
           </p>
         </CardContent>
       </Card>
@@ -53,9 +51,9 @@ function StatsCards({
           <Activity className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{subscriptionStats.totalNodes}</div>
+          <div className="text-2xl font-bold">{checkStats.totalNodes}</div>
           <p className="text-xs text-muted-foreground">
-            成功率 {subscriptionStats.successRate}%
+            成功率 {checkStats.successRate}%
           </p>
         </CardContent>
       </Card>
@@ -123,11 +121,9 @@ function QuickActions() {
 
 function RecentActivity({
   isLoading,
-  subscriptionStats,
   checkStats
 }: {
   isLoading: boolean
-  subscriptionStats: any
   checkStats: any
 }) {
   return (
@@ -158,7 +154,7 @@ function RecentActivity({
                 <div>
                   <p className="text-sm font-medium">订阅服务运行正常</p>
                   <p className="text-xs text-muted-foreground">
-                    {subscriptionStats.active} 个活跃订阅，成功率 {subscriptionStats.successRate}%
+                    {checkStats.active} 个活跃订阅，成功率 {checkStats.successRate}%
                   </p>
                 </div>
               </div>
@@ -175,7 +171,7 @@ function RecentActivity({
                 </div>
               </div>
 
-              {subscriptionStats.total === 0 && checkStats.total === 0 && (
+              {checkStats.total === 0 && (
                 <div className="flex items-center gap-3">
                   <div className="h-8 w-8 rounded-full bg-amber-100 flex items-center justify-center">
                     <Play className="h-4 w-4 text-amber-600" />
@@ -197,7 +193,7 @@ function RecentActivity({
 }
 
 export function DashboardPage() {
-  const { subscriptionStats, checkStats, isLoading } = useDashboardData()
+  const { checkStats, isLoading } = useDashboardData()
 
   return (
     <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
@@ -206,7 +202,6 @@ export function DashboardPage() {
           <StatsSkeleton />
         ) : (
           <StatsCards
-            subscriptionStats={subscriptionStats}
             checkStats={checkStats}
           />
         )}
@@ -215,7 +210,6 @@ export function DashboardPage() {
       <QuickActions />
       <RecentActivity
         isLoading={isLoading}
-        subscriptionStats={subscriptionStats}
         checkStats={checkStats}
       />
     </div>

@@ -2,13 +2,13 @@ import { useState, useCallback } from 'react'
 import { dashboardApi } from '@/lib/api/client'
 import { validateUrl, validateCronExpr } from '@/lib/utils'
 import { useFormUpdate } from '@/lib/hooks'
-import type { SubResponse, SubCreateRequest } from '@/lib/types/sub'
+import type { SubResponse, SubRequest } from '@/lib/types/sub'
 
 interface UseSubscriptionFormProps {
     onSuccess: () => void
 }
 
-const DEFAULT_FORM_DATA: SubCreateRequest = {
+const DEFAULT_FORM_DATA: SubRequest = {
     name: "",
     enable: true,
     cron_expr: "0 */6 * * *",
@@ -20,7 +20,7 @@ const DEFAULT_FORM_DATA: SubCreateRequest = {
     },
 }
 
-function validateSubscriptionForm(data: SubCreateRequest): { isValid: boolean; errors: string[] } {
+function validateSubscriptionForm(data: SubRequest): { isValid: boolean; errors: string[] } {
     const errors: string[] = []
 
     if (!data.name.trim()) {
@@ -42,7 +42,7 @@ function validateSubscriptionForm(data: SubCreateRequest): { isValid: boolean; e
 }
 
 export function useSubscriptionForm({ onSuccess }: UseSubscriptionFormProps) {
-    const [formData, setFormData] = useState<SubCreateRequest>(DEFAULT_FORM_DATA)
+    const [formData, setFormData] = useState<SubRequest>(DEFAULT_FORM_DATA)
     const [editingSubscription, setEditingSubscription] = useState<SubResponse | null>(null)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [isLoadingEdit, setIsLoadingEdit] = useState(false)
@@ -67,7 +67,7 @@ export function useSubscriptionForm({ onSuccess }: UseSubscriptionFormProps) {
         }
 
         try {
-            const submitData: SubCreateRequest = {
+            const submitData: SubRequest = {
                 name: formData.name,
                 enable: formData.enable,
                 cron_expr: formData.cron_expr,

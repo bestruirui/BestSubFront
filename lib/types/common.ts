@@ -33,20 +33,6 @@ export interface PaginatedResponse<T> {
 }
 
 /**
- * 状态枚举
- */
-export type Status = 'active' | 'inactive' | 'pending' | 'error'
-
-/**
- * 通用状态对象
- */
-export interface StatusInfo {
-    status: Status
-    message?: string
-    timestamp?: string
-}
-
-/**
  * 动态配置项类型（用于 check 和 notify）
  */
 export interface DynamicConfigItem {

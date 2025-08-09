@@ -7,8 +7,7 @@ import type {
   CheckResponse,
   CheckRequest,
   HealthResponse,
-  SubCreateRequest,
-  SubUpdateRequest,
+  SubRequest,
   DynamicConfigItem,
   SubNameAndID,
   NotifyResponse,
@@ -194,12 +193,12 @@ export const dashboardApi = {
   async runCheck(id: number, token: string): Promise<void> {
     await apiClient.post<ApiResponse<void>>(`/api/v1/check/${id}/run`, {}, token)
   },
-  async createSubscription(data: SubCreateRequest, token: string): Promise<SubResponse> {
+  async createSubscription(data: SubRequest, token: string): Promise<SubResponse> {
     const response = await apiClient.post<ApiResponse<SubResponse>>(apiConfig.endpoints.sub, data, token)
     return response.data
   },
 
-  async updateSubscription(id: number, data: SubUpdateRequest, token: string): Promise<SubResponse> {
+  async updateSubscription(id: number, data: SubRequest, token: string): Promise<SubResponse> {
     const response = await apiClient.put<ApiResponse<SubResponse>>(`${apiConfig.endpoints.sub}/${id}`, data, token)
     return response.data
   },
