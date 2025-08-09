@@ -1,23 +1,23 @@
 import { useState, useCallback, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
-import { useAuth } from "@/components/providers/auth-provider"
 import { dashboardApi } from '@/lib/api/client'
 import { NotifyForm } from './notify-form'
 import { NotifyList } from './notify-list'
 import { useNotifyForm } from '../hooks/useNotifyForm'
 import { useNotifyOperations } from '../hooks/useNotifyOperations'
 import type { NotifyResponse } from '@/lib/types'
+import { DialogContainer } from "@/components/ui/dialog-container"
 
 export function NotifyPage() {
     const [notifies, setNotifies] = useState<NotifyResponse[]>([])
     const [isLoading, setIsLoading] = useState(true)
-    const { user } = useAuth()
+    const getToken = useCallback(() => localStorage.getItem('access_token'), [])
 
     const loadNotifies = useCallback(async () => {
         try {
             setIsLoading(true)
-            const token = localStorage.getItem('access_token')
+            const token = getToken()
             if (!token) return
 
             const data = await dashboardApi.getNotifyList(token)
@@ -27,7 +27,7 @@ export function NotifyPage() {
         } finally {
             setIsLoading(false)
         }
-    }, [])
+    }, [getToken])
 
     useEffect(() => {
         loadNotifies()
@@ -48,14 +48,17 @@ export function NotifyPage() {
         handleEdit,
         openCreateDialog,
         closeDialog
-    } = useNotifyForm({ onSuccess: loadNotifies, _user: user })
+    } = useNotifyForm({ onSuccess: loadNotifies })
 
     const {
         deletingId,
         testingId,
+        confirmState,
+        closeConfirm,
+        handleConfirm,
         handleDelete,
         handleTest
-    } = useNotifyOperations({ onSuccess: loadNotifies, _user: user })
+    } = useNotifyOperations({ onSuccess: loadNotifies })
 
     const handleTestNotify = useCallback((notify: NotifyResponse) => {
         handleTest({
@@ -67,21 +70,16 @@ export function NotifyPage() {
 
     return (
         <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-            {/* 页面标题和操作按钮 */}
             <div className="flex items-center justify-between px-4 lg:px-6">
                 <div>
-                    <h1 className="text-2xl font-bold">通知管理</h1>
-                    <p className="text-muted-foreground">
-                        管理通知配置，支持多种通知渠道
-                    </p>
+                    <h1 className="text-2xl font-bold">通知配置</h1>
                 </div>
                 <Button onClick={openCreateDialog}>
-                    <Plus className="mr-2 h-4 w-4" />
-                    创建通知配置
+                    <Plus className="h-4 w-4 mr-2" />
+                    添加通知
                 </Button>
             </div>
 
-            {/* 通知表单 */}
             <NotifyForm
                 formData={formData}
                 editingNotify={editingNotify}
@@ -97,7 +95,6 @@ export function NotifyPage() {
                 onOpenChange={closeDialog}
             />
 
-            {/* 通知列表 */}
             <div className="px-4 lg:px-6">
                 <NotifyList
                     notifies={notifies}
@@ -109,6 +106,11 @@ export function NotifyPage() {
                     onTest={handleTestNotify}
                 />
             </div>
+            <DialogContainer
+                confirmState={confirmState}
+                onConfirmClose={closeConfirm}
+                onConfirmAction={handleConfirm}
+            />
         </div>
     )
 } 

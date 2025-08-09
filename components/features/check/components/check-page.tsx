@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { dashboardApi } from "@/lib/api/client"
-import { useAuth } from "@/components/providers/auth-provider"
 import { useCheckForm } from "../hooks/useCheckForm"
 import { useCheckOperations } from "../hooks/useCheckOperations"
 import { CheckForm } from "./check-form"
@@ -13,13 +12,13 @@ import type { CheckResponse } from "@/lib/types/check"
 export function CheckPage() {
     const [checks, setChecks] = useState<CheckResponse[]>([])
     const [isLoading, setIsLoading] = useState(true)
-    const { user } = useAuth()
+
+    const getToken = useCallback(() => localStorage.getItem('access_token'), [])
 
     const loadChecks = useCallback(async () => {
-        if (!user) return
-
         try {
-            const token = localStorage.getItem('access_token')
+            setIsLoading(true)
+            const token = getToken()
             if (!token) return
 
             const data = await dashboardApi.getChecks(token)
@@ -30,7 +29,7 @@ export function CheckPage() {
         } finally {
             setIsLoading(false)
         }
-    }, [user])
+    }, [getToken])
 
     useEffect(() => {
         loadChecks()
@@ -47,7 +46,6 @@ export function CheckPage() {
         isLoadingEdit,
         editingCheck,
         isDialogOpen,
-        alertState,
         updateFormField,
         updateConfigField,
         handleTypeChange,
@@ -55,7 +53,6 @@ export function CheckPage() {
         handleEdit,
         openCreateDialog,
         closeDialog,
-        closeAlert,
     } = useCheckForm({ onSuccess: loadChecks })
 
     const {
@@ -112,9 +109,7 @@ export function CheckPage() {
             </div>
 
             <DialogContainer
-                alertState={alertState}
                 confirmState={confirmState}
-                onAlertClose={closeAlert}
                 onConfirmClose={closeConfirm}
                 onConfirmAction={handleConfirm}
             />

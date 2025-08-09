@@ -58,9 +58,9 @@ export function NotifyForm({
                         <Input
                             id="name"
                             type="text"
-                            placeholder="请输入通知名称"
                             value={formData.name}
                             onChange={(e) => updateFormField('name', e.target.value)}
+                            placeholder="请输入通知名称"
                             required
                         />
                     </div>
@@ -85,7 +85,6 @@ export function NotifyForm({
                         </Select>
                     </div>
 
-                    {/* 动态配置项 */}
                     {formData.type && (
                         <DynamicConfigForm
                             configs={currentConfigs}

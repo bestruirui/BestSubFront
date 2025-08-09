@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react'
 import { dashboardApi } from '@/lib/api/client'
 import { useConfirmDialog } from '@/lib/hooks'
+import { toast } from 'sonner'
 
 interface UseCheckOperationsProps {
     onSuccess: () => void
@@ -19,12 +20,14 @@ export function useCheckOperations({ onSuccess }: UseCheckOperationsProps) {
             const token = getToken()
             if (!token) return
 
-            setDeletingId(id)
             try {
+                setDeletingId(id)
                 await dashboardApi.deleteCheck(id, token)
+                toast.success('检测任务删除成功')
                 onSuccess()
             } catch (error) {
                 console.error('Failed to delete check:', error)
+                toast.error('删除检测任务失败')
             } finally {
                 setDeletingId(null)
             }
@@ -35,12 +38,14 @@ export function useCheckOperations({ onSuccess }: UseCheckOperationsProps) {
         const token = getToken()
         if (!token) return
 
-        setRunningId(id)
         try {
+            setRunningId(id)
             await dashboardApi.runCheck(id, token)
+            toast.success('检测任务运行成功')
             onSuccess()
         } catch (error) {
             console.error('Failed to run check:', error)
+            toast.error('检测任务运行失败')
         } finally {
             setRunningId(null)
         }

@@ -59,7 +59,7 @@ export function CheckForm({
                             id="name"
                             value={formData.name}
                             onChange={(e) => updateFormField('name', e.target.value)}
-                            placeholder="输入检测任务名称"
+                            placeholder="请输入检测任务名称"
                             required
                         />
                     </div>

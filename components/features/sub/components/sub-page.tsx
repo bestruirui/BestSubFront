@@ -44,14 +44,12 @@ export function SubscriptionPage() {
         editingSubscription,
         isDialogOpen,
         isLoadingEdit,
-        alertState,
         updateFormField,
         updateConfigField,
         handleSubmit,
         handleEdit,
         openCreateDialog,
         closeDialog,
-        closeAlert,
     } = useSubscriptionForm({ onSuccess: loadSubscriptions })
 
     const {
@@ -113,9 +111,7 @@ export function SubscriptionPage() {
             />
 
             <DialogContainer
-                alertState={alertState}
                 confirmState={confirmState}
-                onAlertClose={closeAlert}
                 onConfirmClose={closeConfirm}
                 onConfirmAction={handleConfirm}
             />

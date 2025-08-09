@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { dashboardApi } from '@/lib/api/client'
 import { validateUrl, validateCronExpr } from '@/lib/utils'
-import { useAlertDialog, useFormUpdate } from '@/lib/hooks'
+import { useFormUpdate } from '@/lib/hooks'
 import type { SubResponse, SubCreateRequest } from '@/lib/types/sub'
 
 interface UseSubscriptionFormProps {
@@ -47,8 +47,6 @@ export function useSubscriptionForm({ onSuccess }: UseSubscriptionFormProps) {
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [isLoadingEdit, setIsLoadingEdit] = useState(false)
 
-    const { alertState, showError, closeAlert } = useAlertDialog()
-
     const { updateFormField, updateConfigField } = useFormUpdate(setFormData)
 
     const getToken = useCallback(() => localStorage.getItem('access_token'), [])
@@ -60,13 +58,11 @@ export function useSubscriptionForm({ onSuccess }: UseSubscriptionFormProps) {
 
         const validation = validateSubscriptionForm(formData)
         if (!validation.isValid) {
-            showError('表单验证失败', validation.errors.join('\n'))
             return
         }
 
         const token = getToken()
         if (!token) {
-            showError('登录状态无效', '请先登录')
             return
         }
 
@@ -90,9 +86,8 @@ export function useSubscriptionForm({ onSuccess }: UseSubscriptionFormProps) {
             onSuccess()
         } catch (error) {
             console.error('Failed to save subscription:', error)
-            showError('保存失败', '请重试')
         }
-    }, [formData, editingSubscription, getToken, onSuccess, showError])
+    }, [formData, editingSubscription, getToken, onSuccess])
 
     const handleEdit = useCallback((subscription: SubResponse) => {
         setIsLoadingEdit(true)
@@ -129,13 +124,11 @@ export function useSubscriptionForm({ onSuccess }: UseSubscriptionFormProps) {
         editingSubscription,
         isDialogOpen,
         isLoadingEdit,
-        alertState,
         updateFormField,
         updateConfigField,
         handleSubmit,
         handleEdit,
         openCreateDialog,
         closeDialog,
-        closeAlert,
     }
 } 

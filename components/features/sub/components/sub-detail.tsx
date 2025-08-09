@@ -30,29 +30,25 @@ export function SubscriptionDetail({
                     <DialogTitle>订阅详情 - {subscription.name}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-6">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <h3 className="font-semibold mb-2">基本信息</h3>
-                            <div className="space-y-2 text-sm">
+                    <div>
+                        <h3 className="font-semibold mb-2">基本信息</h3>
+                        <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
+                            <div className="space-y-2">
                                 <div className="text-muted-foreground"><span>ID:</span> {subscription.id}</div>
                                 <div className="text-muted-foreground"><span>名称:</span> {subscription.name}</div>
-                                <div className="text-muted-foreground"><span>启用:</span> {subscription.enable ? '是' : '否'}</div>
                                 <div className="text-muted-foreground"><span>Cron:</span> {subscription.cron_expr}</div>
                                 <div className="text-muted-foreground">
                                     <span>状态:</span> <StatusBadge status={subscription.status} enable={subscription.enable} />
                                 </div>
+                                {subscription.result?.duration && (
+                                    <div className="text-muted-foreground"><span>运行耗时:</span> {formatDuration(subscription.result.duration)}</div>
+                                )}
                             </div>
-                        </div>
-                        <div>
-                            <h3 className="font-semibold mb-2">时间信息</h3>
-                            <div className="space-y-2 text-sm">
+                            <div className="space-y-2">
                                 <div className="text-muted-foreground"><span>创建时间:</span> {formatTime(subscription.created_at) || '未知'}</div>
                                 <div className="text-muted-foreground"><span>更新时间:</span> {formatTime(subscription.updated_at) || '未知'}</div>
                                 <div className="text-muted-foreground"><span>最后运行:</span> {formatLastRunTime(subscription.result?.last_run)}</div>
                                 <div className="text-muted-foreground"><span>下次运行:</span> {getNextCronRunTime(subscription.cron_expr, subscription.enable) || '未启用或无法计算'}</div>
-                                {subscription.result?.duration && (
-                                    <div className="text-muted-foreground"><span>运行耗时:</span> {formatDuration(subscription.result.duration)}</div>
-                                )}
                             </div>
                         </div>
                     </div>
@@ -108,6 +104,6 @@ export function SubscriptionDetail({
                     </div>
                 </div>
             </DialogContent>
-        </Dialog>
+        </Dialog >
     )
 } 

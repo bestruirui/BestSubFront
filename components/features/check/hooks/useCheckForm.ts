@@ -1,10 +1,11 @@
 import { useState, useCallback } from 'react'
 import { dashboardApi } from '@/lib/api/client'
 import { validateCronExpr } from '@/lib/utils'
-import { useAlertDialog, useFormUpdate } from '@/lib/hooks'
+import { useFormUpdate } from '@/lib/hooks'
 import type { CheckResponse, CheckRequest } from '@/lib/types/check'
 import type { DynamicConfigItem } from '@/lib/types/common'
 import type { SubNameAndID } from '@/lib/types/sub'
+import { toast } from 'sonner'
 
 const processConfigDefaults = (config: Record<string, unknown>, configs: DynamicConfigItem[]): Record<string, unknown> => {
     const processedConfig = { ...config }
@@ -80,7 +81,6 @@ export function useCheckForm({ onSuccess }: UseCheckFormProps) {
     const [editingCheck, setEditingCheck] = useState<CheckResponse | null>(null)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-    const { alertState, showError, closeAlert } = useAlertDialog()
 
     const { updateFormField, updateConfigField } = useFormUpdate(setFormData)
 
@@ -96,6 +96,7 @@ export function useCheckForm({ onSuccess }: UseCheckFormProps) {
             setCheckTypes(types)
         } catch (error) {
             console.error('Failed to load check types:', error)
+            toast.error('加载检测类型失败')
             setCheckTypes([])
         } finally {
             setIsLoadingTypes(false)
@@ -116,6 +117,7 @@ export function useCheckForm({ onSuccess }: UseCheckFormProps) {
             }
         } catch (error) {
             console.error('Failed to load check type config:', error)
+            toast.error('加载检测类型配置失败')
             setCheckTypeConfigs(prev => ({ ...prev, [type]: [] }))
         } finally {
             setIsLoadingConfigs(false)
@@ -150,13 +152,11 @@ export function useCheckForm({ onSuccess }: UseCheckFormProps) {
 
         const validation = validateCheckForm(formData)
         if (!validation.isValid) {
-            showError('表单验证失败', validation.errors.join('\n'))
             return
         }
 
         const token = getToken()
         if (!token) {
-            showError('认证失败', '请先登录')
             return
         }
 
@@ -192,9 +192,8 @@ export function useCheckForm({ onSuccess }: UseCheckFormProps) {
             onSuccess()
         } catch (error) {
             console.error('Failed to save check:', error)
-            showError('保存失败', '请检查网络连接后重试')
         }
-    }, [formData, editingCheck, getToken, onSuccess, checkTypeConfigs, showError])
+    }, [formData, editingCheck, getToken, onSuccess, checkTypeConfigs])
 
     const handleEdit = useCallback(async (check: CheckResponse) => {
         try {
@@ -232,11 +231,10 @@ export function useCheckForm({ onSuccess }: UseCheckFormProps) {
             setIsDialogOpen(true)
         } catch (error) {
             console.error('Failed to load edit data:', error)
-            showError('加载编辑数据失败', '请重试或刷新页面')
         } finally {
             setIsLoadingEdit(false)
         }
-    }, [subList.length, checkTypeConfigs, loadSubList, loadCheckTypeConfig, showError])
+    }, [subList.length, checkTypeConfigs, loadSubList, loadCheckTypeConfig])
 
     const openCreateDialog = useCallback(async () => {
         setEditingCheck(null)
@@ -270,7 +268,6 @@ export function useCheckForm({ onSuccess }: UseCheckFormProps) {
         isLoadingEdit,
         editingCheck,
         isDialogOpen,
-        alertState,
         setFormData,
         updateFormField,
         updateConfigField,
@@ -279,7 +276,6 @@ export function useCheckForm({ onSuccess }: UseCheckFormProps) {
         handleEdit,
         openCreateDialog,
         closeDialog,
-        closeAlert,
     }
 }
 

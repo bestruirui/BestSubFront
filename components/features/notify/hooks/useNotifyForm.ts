@@ -3,13 +3,8 @@ import { toast } from 'sonner'
 import { dashboardApi } from '@/lib/api/client'
 import type { NotifyRequest, NotifyResponse, DynamicConfigItem } from '@/lib/types'
 
-interface FormData {
-    name: string
-    type: string
-    config: Record<string, unknown>
-}
 
-const DEFAULT_FORM_DATA: FormData = {
+const DEFAULT_FORM_DATA: NotifyRequest = {
     name: '',
     type: '',
     config: {}
@@ -17,11 +12,10 @@ const DEFAULT_FORM_DATA: FormData = {
 
 interface UseNotifyFormProps {
     onSuccess: () => void
-    _user: unknown
 }
 
-export function useNotifyForm({ onSuccess, _user }: UseNotifyFormProps) {
-    const [formData, setFormData] = useState<FormData>(DEFAULT_FORM_DATA)
+export function useNotifyForm({ onSuccess }: UseNotifyFormProps) {
+    const [formData, setFormData] = useState<NotifyRequest>(DEFAULT_FORM_DATA)
     const [notifyChannels, setNotifyChannels] = useState<string[]>([])
     const [channelConfigs, setChannelConfigs] = useState<Record<string, DynamicConfigItem[]>>({})
     const [isLoadingChannels, setIsLoadingChannels] = useState(false)
@@ -34,7 +28,10 @@ export function useNotifyForm({ onSuccess, _user }: UseNotifyFormProps) {
     const loadNotifyChannels = useCallback(async () => {
         try {
             setIsLoadingChannels(true)
-            const channels = await dashboardApi.getNotifyChannels(getToken() || '')
+            const token = getToken()
+            if (!token) return
+
+            const channels = await dashboardApi.getNotifyChannels(token)
             setNotifyChannels(channels)
         } catch (error) {
             console.error('Failed to load notify channels:', error)
@@ -67,7 +64,7 @@ export function useNotifyForm({ onSuccess, _user }: UseNotifyFormProps) {
         }
     }, [channelConfigs, loadChannelConfig])
 
-    const updateFormField = useCallback((field: keyof FormData, value: string) => {
+    const updateFormField = useCallback((field: keyof NotifyRequest, value: string) => {
         setFormData(prev => ({ ...prev, [field]: value }))
     }, [])
 
