@@ -1,0 +1,8 @@
+export { SettingsDialog } from './settings/settings'
+export { DashboardPage } from './home/dashboard'
+export { StoragePage } from './storage/storage'
+export { CheckPage } from './check'
+export { SharePage } from './share'
+export { NotifyPage } from './notify'
+export { LoginPage } from './login'
+export { SubPage } from './sub'
