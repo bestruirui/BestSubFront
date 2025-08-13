@@ -16,7 +16,6 @@ export function RouterOutlet({ fallback: Fallback }: RouterOutletProps) {
 
   const currentRoute = routes.find(route => route.path === currentPath)
 
-  // 认证保护逻辑
   useEffect(() => {
     if (!authLoading) {
       if (currentRoute?.protected && !isAuthenticated && currentPath !== '/login') {
@@ -29,9 +28,12 @@ export function RouterOutlet({ fallback: Fallback }: RouterOutletProps) {
         return
       }
 
-      // 处理根路径重定向
-      if ((!currentPath || currentPath === '' || currentPath === '/') && isAuthenticated) {
-        navigate('/dashboard', undefined, { replace: true })
+      if (!currentPath || currentPath === '' || currentPath === '/') {
+        if (isAuthenticated) {
+          navigate('/dashboard', undefined, { replace: true })
+        } else {
+          navigate('/login', undefined, { replace: true })
+        }
         return
       }
     }
@@ -46,7 +48,6 @@ export function RouterOutlet({ fallback: Fallback }: RouterOutletProps) {
   }
 
   if (currentRoute) {
-    // 检查路由保护
     if (currentRoute.protected && !isAuthenticated) {
       return <Loading variant="fullscreen" message="跳转到登录..." />
     }
