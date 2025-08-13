@@ -29,56 +29,56 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/src/components/ui/sidebar"
-
+import { APP_ROUTES } from "@/src/lib/config/config"
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const navMain = [
     {
-      title: "仪表盘",
-      url: "/dashboard",
+      title: APP_ROUTES.DASHBOARD.title,
+      url: APP_ROUTES.DASHBOARD.path,
       icon: IconDashboard,
     },
     {
-      title: "订阅管理",
-      url: "/sub",
+      title: APP_ROUTES.SUB.title,
+      url: APP_ROUTES.SUB.path,
       icon: IconLink,
     },
     {
-      title: "检测任务",
-      url: "/check",
+      title: APP_ROUTES.CHECK.title,
+      url: APP_ROUTES.CHECK.path,
       icon: IconSearch,
     },
     {
-      title: "分享管理",
-      url: "/share",
+      title: APP_ROUTES.SHARE.title,
+      url: APP_ROUTES.SHARE.path,
       icon: IconShare,
     },
     {
-      title: "存储配置",
-      url: "/storage",
+      title: APP_ROUTES.STORAGE.title,
+      url: APP_ROUTES.STORAGE.path,
       icon: IconDatabase,
     },
     {
-      title: "通知配置",
-      url: "/notify",
+      title: APP_ROUTES.NOTIFY.title,
+      url: APP_ROUTES.NOTIFY.path,
       icon: IconBell,
     },
   ]
 
   const navSecondary = [
     {
-      title: "日志查看",
-      url: "/log",
+      title: APP_ROUTES.LOG.title,
+      url: APP_ROUTES.LOG.path,
       icon: IconFileText,
     },
     {
-      title: "帮助文档",
-      url: "/help",
+      title: APP_ROUTES.HELP.title,
+      url: APP_ROUTES.HELP.path,
       icon: IconHelp,
     },
     {
-      title: "GitHub",
-      url: "https://github.com/bestruirui/BestSub",
+      title: APP_ROUTES.GITHUB.title,
+      url: APP_ROUTES.GITHUB.path,
       icon: IconBrandGithub,
     },
   ]

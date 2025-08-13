@@ -1,8 +1,7 @@
-import { apiBaseUrl, apiPath } from '../config/config'
+import { API_PATH } from '../config/config'
 import { tokenManager } from './token-manager'
 import type { LoginResponse, UserInfo, ApiResponse, SubResponse, CheckResponse, CheckRequest, HealthResponse, SubRequest, DynamicConfigItem, SubNameAndID, NotifyResponse, NotifyRequest, NotifyTemplate, NotifyChannel, NotifyChannelConfigResponse, ShareResponse, ShareRequest } from '../../types'
 
-const NORMALIZED_BASE_URL = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl
 const DEFAULT_REQUEST_HEADERS: Record<string, string> = {}
 
 export class ApiError extends Error {
@@ -22,7 +21,7 @@ class ApiClient {
     options: RequestInit = {},
     requiresAuth: boolean = true
   ): Promise<T> {
-    const url = `${NORMALIZED_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`
+    const url = `${API_PATH.base}${endpoint}`
 
     const hasBody = options.body !== undefined && options.body !== null
     const mergedHeaders: Record<string, string> = {
@@ -118,7 +117,7 @@ const apiClient = new ApiClient()
 export const api = {
   async login(username: string, password: string): Promise<LoginResponse> {
     const response = await apiClient.post<ApiResponse<LoginResponse>>(
-      apiPath.auth.login,
+      API_PATH.auth.login,
       { username, password },
       false
     )
@@ -126,12 +125,12 @@ export const api = {
   },
 
   async logout(): Promise<void> {
-    await apiClient.post<ApiResponse<void>>(apiPath.auth.logout, {})
+    await apiClient.post<ApiResponse<void>>(API_PATH.auth.logout, {})
   },
 
   async refreshToken(refreshToken: string): Promise<LoginResponse> {
     const response = await apiClient.post<ApiResponse<LoginResponse>>(
-      apiPath.auth.refresh,
+      API_PATH.auth.refresh,
       { refresh_token: refreshToken },
       false
     )
@@ -139,118 +138,118 @@ export const api = {
   },
 
   async getUserInfo(): Promise<UserInfo> {
-    const response = await apiClient.get<ApiResponse<UserInfo>>(apiPath.auth.user)
+    const response = await apiClient.get<ApiResponse<UserInfo>>(API_PATH.auth.user)
     return response.data
   },
   async getSub(id?: number): Promise<SubResponse[]> {
-    const url = id ? `${apiPath.sub}?id=${id}` : apiPath.sub
+    const url = id ? `${API_PATH.sub}?id=${id}` : API_PATH.sub
     const response = await apiClient.get<ApiResponse<SubResponse[]>>(url)
     return response.data
   },
   async getChecks(id?: number): Promise<CheckResponse[]> {
-    const url = id ? `${apiPath.check}?id=${id}` : apiPath.check
+    const url = id ? `${API_PATH.check}?id=${id}` : API_PATH.check
     const response = await apiClient.get<ApiResponse<CheckResponse[]>>(url)
     return response.data
   },
   async getCheckTypes(): Promise<string[]> {
-    const response = await apiClient.get<ApiResponse<string[]>>(`${apiPath.check}/type`)
+    const response = await apiClient.get<ApiResponse<string[]>>(`${API_PATH.check}/type`)
     return response.data
   },
   async getCheckTypeConfig(type?: string): Promise<Record<string, DynamicConfigItem[]> | DynamicConfigItem[]> {
     const url = type
-      ? `${apiPath.check}/type/config?type=${type}`
-      : `${apiPath.check}/type/config`
+      ? `${API_PATH.check}/type/config?type=${type}`
+      : `${API_PATH.check}/type/config`
 
     const response = await apiClient.get<ApiResponse<Record<string, DynamicConfigItem[]>>>(url)
     return response.data
   },
   async getSystemHealth(): Promise<HealthResponse> {
-    const response = await apiClient.get<ApiResponse<HealthResponse>>(apiPath.system.health, false) // 系统健康检查不需要认证
+    const response = await apiClient.get<ApiResponse<HealthResponse>>(API_PATH.system.health, false) // 系统健康检查不需要认证
     return response.data
   },
   async refreshSubscription(id: number): Promise<void> {
-    await apiClient.post<ApiResponse<void>>(`${apiPath.sub}/refresh/${id}`, {})
+    await apiClient.post<ApiResponse<void>>(`${API_PATH.sub}/refresh/${id}`, {})
   },
   async runCheck(id: number): Promise<void> {
-    await apiClient.post<ApiResponse<void>>(`${apiPath.check}/${id}/run`, {})
+    await apiClient.post<ApiResponse<void>>(`${API_PATH.check}/${id}/run`, {})
   },
   async createSubscription(data: SubRequest): Promise<SubResponse> {
-    const response = await apiClient.post<ApiResponse<SubResponse>>(apiPath.sub, data)
+    const response = await apiClient.post<ApiResponse<SubResponse>>(API_PATH.sub, data)
     return response.data
   },
   async updateSubscription(id: number, data: SubRequest): Promise<SubResponse> {
-    const response = await apiClient.put<ApiResponse<SubResponse>>(`${apiPath.sub}/${id}`, data)
+    const response = await apiClient.put<ApiResponse<SubResponse>>(`${API_PATH.sub}/${id}`, data)
     return response.data
   },
   async deleteSubscription(id: number): Promise<void> {
-    await apiClient.delete<ApiResponse<void>>(`${apiPath.sub}/${id}`)
+    await apiClient.delete<ApiResponse<void>>(`${API_PATH.sub}/${id}`)
   },
   async createCheck(data: CheckRequest): Promise<CheckResponse> {
-    const response = await apiClient.post<ApiResponse<CheckResponse>>(apiPath.check, data)
+    const response = await apiClient.post<ApiResponse<CheckResponse>>(API_PATH.check, data)
     return response.data
   },
   async updateCheck(id: number, data: CheckRequest): Promise<CheckResponse> {
-    const response = await apiClient.put<ApiResponse<CheckResponse>>(`${apiPath.check}/${id}`, data)
+    const response = await apiClient.put<ApiResponse<CheckResponse>>(`${API_PATH.check}/${id}`, data)
     return response.data
   },
   async deleteCheck(id: number): Promise<void> {
-    await apiClient.delete<ApiResponse<void>>(`${apiPath.check}/${id}`)
+    await apiClient.delete<ApiResponse<void>>(`${API_PATH.check}/${id}`)
   },
   async getSubNameAndID(): Promise<SubNameAndID[]> {
-    const response = await apiClient.get<ApiResponse<SubNameAndID[]>>(`${apiPath.sub}/name`)
+    const response = await apiClient.get<ApiResponse<SubNameAndID[]>>(`${API_PATH.sub}/name`)
     return response.data
   },
   async getNotifyChannels(): Promise<NotifyChannel[]> {
-    const response = await apiClient.get<ApiResponse<NotifyChannel[]>>(`${apiPath.notify}/channel`)
+    const response = await apiClient.get<ApiResponse<NotifyChannel[]>>(`${API_PATH.notify}/channel`)
     return response.data
   },
   async getNotifyChannelConfig(channel?: string): Promise<NotifyChannelConfigResponse | DynamicConfigItem[]> {
     const url = channel
-      ? `${apiPath.notify}/channel/config?channel=${encodeURIComponent(channel)}`
-      : `${apiPath.notify}/channel/config`
+      ? `${API_PATH.notify}/channel/config?channel=${encodeURIComponent(channel)}`
+      : `${API_PATH.notify}/channel/config`
     const response = await apiClient.get<ApiResponse<NotifyChannelConfigResponse | DynamicConfigItem[]>>(url)
     return response.data
   },
   async getNotifyList(): Promise<NotifyResponse[]> {
-    const response = await apiClient.get<ApiResponse<NotifyResponse[]>>(apiPath.notify)
+    const response = await apiClient.get<ApiResponse<NotifyResponse[]>>(API_PATH.notify)
     return response.data
   },
   async createNotify(data: NotifyRequest): Promise<NotifyResponse> {
-    const response = await apiClient.post<ApiResponse<NotifyResponse>>(apiPath.notify, data)
+    const response = await apiClient.post<ApiResponse<NotifyResponse>>(API_PATH.notify, data)
     return response.data
   },
   async updateNotify(id: number, data: NotifyRequest): Promise<NotifyResponse> {
-    const response = await apiClient.put<ApiResponse<NotifyResponse>>(`${apiPath.notify}?id=${id}`, data)
+    const response = await apiClient.put<ApiResponse<NotifyResponse>>(`${API_PATH.notify}?id=${id}`, data)
     return response.data
   },
   async deleteNotify(id: number): Promise<void> {
-    await apiClient.delete<ApiResponse<void>>(`${apiPath.notify}?id=${id}`)
+    await apiClient.delete<ApiResponse<void>>(`${API_PATH.notify}?id=${id}`)
   },
   async testNotify(data: NotifyRequest): Promise<void> {
-    await apiClient.post<ApiResponse<void>>(`${apiPath.notify}/test`, data)
+    await apiClient.post<ApiResponse<void>>(`${API_PATH.notify}/test`, data)
   },
   async getNotifyTemplates(): Promise<NotifyTemplate[]> {
-    const response = await apiClient.get<ApiResponse<NotifyTemplate[]>>(`${apiPath.notify}/template`)
+    const response = await apiClient.get<ApiResponse<NotifyTemplate[]>>(`${API_PATH.notify}/template`)
     return response.data
   },
   async updateNotifyTemplate(data: NotifyTemplate): Promise<NotifyTemplate> {
-    const response = await apiClient.put<ApiResponse<NotifyTemplate>>(`${apiPath.notify}/template`, data)
+    const response = await apiClient.put<ApiResponse<NotifyTemplate>>(`${API_PATH.notify}/template`, data)
     return response.data
   },
   async getShares(id?: number): Promise<ShareResponse[]> {
-    const url = id ? `${apiPath.share}?id=${id}` : apiPath.share
+    const url = id ? `${API_PATH.share}?id=${id}` : API_PATH.share
     const response = await apiClient.get<ApiResponse<ShareResponse[]>>(url)
     return response.data
   },
   async createShare(data: ShareRequest): Promise<ShareResponse> {
-    const response = await apiClient.post<ApiResponse<ShareResponse>>(apiPath.share, data)
+    const response = await apiClient.post<ApiResponse<ShareResponse>>(API_PATH.share, data)
     return response.data
   },
   async updateShare(id: number, data: ShareRequest): Promise<ShareResponse> {
-    const response = await apiClient.put<ApiResponse<ShareResponse>>(`${apiPath.share}/${id}`, data)
+    const response = await apiClient.put<ApiResponse<ShareResponse>>(`${API_PATH.share}/${id}`, data)
     return response.data
   },
   async deleteShare(id: number): Promise<void> {
-    await apiClient.delete<ApiResponse<void>>(`${apiPath.share}/${id}`)
+    await apiClient.delete<ApiResponse<void>>(`${API_PATH.share}/${id}`)
   },
 }

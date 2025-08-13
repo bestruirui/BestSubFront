@@ -1,7 +1,5 @@
-import { apiBaseUrl, apiPath } from '../config/config'
+import { API_PATH } from '../config/config'
 import type { LoginResponse } from '../../types'
-
-const NORMALIZED_BASE_URL = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl
 
 const TOKEN_KEYS = {
     ACCESS_TOKEN: 'access_token',
@@ -67,7 +65,7 @@ export class TokenManager {
             }
 
             // access token 过期，直接调用refresh API避免循环依赖
-            const response = await fetch(`${NORMALIZED_BASE_URL}${apiPath.auth.refresh}`, {
+            const response = await fetch(`${API_PATH.base}${API_PATH.auth.refresh}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ refresh_token: tokens.refresh_token })
