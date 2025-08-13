@@ -4,23 +4,17 @@ import { Label } from "@/src/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/components/ui/dialog"
 import { DynamicConfigForm } from "@/src/components/ui/dynamic-config-form"
-import type { DynamicConfigItem, NotifyResponse } from "@/src/types"
-
-interface FormData {
-    name: string
-    type: string
-    config: Record<string, unknown>
-}
+import type { DynamicConfigItem, NotifyResponse, NotifyRequest } from "@/src/types"
 
 interface NotifyFormProps {
-    formData: FormData
+    formData: NotifyRequest
     editingNotify: NotifyResponse | null
     isDialogOpen: boolean
     notifyChannels: string[]
     channelConfigs: Record<string, DynamicConfigItem[]>
     isLoadingChannels: boolean
     isLoadingConfigs: boolean
-    updateFormField: (field: keyof FormData, value: string) => void
+    updateFormField: (field: keyof NotifyRequest, value: string) => void
     updateConfigField: (field: string, value: string | boolean | number) => void
     handleChannelChange: (channel: string) => void
     handleSubmit: (e: React.FormEvent) => void
