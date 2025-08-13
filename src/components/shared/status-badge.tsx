@@ -18,6 +18,7 @@ const STATUS_CONFIG: Record<string, StatusConfig> = {
 
     scheduled: { variant: 'default', className: 'bg-green-500 hover:bg-green-600', text: '已调度' },
     disabled: { variant: 'secondary', className: '', text: '已停用' },
+    enable: { variant: 'default', className: 'bg-green-500 hover:bg-green-600', text: '已启用' },
 } as const
 
 const DISABLED_CONFIG: StatusConfig = {
