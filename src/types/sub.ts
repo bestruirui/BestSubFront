@@ -2,7 +2,6 @@ export interface SubConfig {
     url: string
     proxy?: boolean
     timeout?: number
-    type?: 'clash' | 'singbox' | 'base64' | 'v2ray' | 'auto'
 }
 
 export interface SubRequest {
@@ -23,24 +22,24 @@ export interface SubResult {
 }
 
 export interface SubNodeInfo {
-    count: number
     speed_up: number
     speed_down: number
     delay: number
     risk: number
+    count: number
 }
 
 export interface SubResponse {
     id: number
     name: string
     enable: boolean
-    status: string
     cron_expr: string
-    created_at: string
-    updated_at: string
+    config: SubConfig
+    status: string
     result: SubResult
     info: SubNodeInfo
-    config: SubConfig
+    created_at: string
+    updated_at: string
 }
 
 export interface SubNameAndID {

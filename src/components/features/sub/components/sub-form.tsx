@@ -2,7 +2,6 @@ import { Button } from "@/src/components/ui/button"
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Switch } from "@/src/components/ui/switch"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/components/ui/dialog"
 import { validateTimeout, validateUrl, validateCronExpr } from "@/src/utils"
 import type { SubRequest } from "@/src/types/sub"
@@ -87,26 +86,6 @@ export function SubForm({
                         </div>
 
                     </div>
-
-                    <div className="w-full">
-                        <Label htmlFor="type" className="mb-2 block">订阅类型</Label>
-                        <Select onValueChange={(value) => updateConfigField('type', value)} value={formData.config.type || 'auto'}>
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="选择订阅类型" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="auto">自动检测</SelectItem>
-                                <SelectItem value="clash">Clash</SelectItem>
-                                <SelectItem value="singbox">SingBox</SelectItem>
-                                <SelectItem value="base64">Base64</SelectItem>
-                                <SelectItem value="v2ray">V2Ray</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <p className="text-xs text-muted-foreground mt-2">
-                            默认自动检测订阅类型
-                        </p>
-                    </div>
-
                     <div className="space-y-4">
                         <div className="flex items-center justify-between">
                             <Label htmlFor="proxy">使用代理</Label>
