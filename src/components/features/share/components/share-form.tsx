@@ -5,9 +5,9 @@ import { UI_TEXT } from "../constants"
 import {
     BasicInfoSection,
     ConfigSection,
-    SubscriptionSection,
     FilterSection
 } from "./form-sections"
+import { SubscriptionSection } from "@/src/components/shared/subscription-section"
 import type { ShareRequest } from "@/src/types"
 
 interface ShareFormProps {
@@ -26,10 +26,10 @@ export function ShareForm({
     editingShareId,
 }: ShareFormProps) {
     const { form, onSubmit, watch, isEditing } = useShareForm({
-      initialData,
-      editingShareId,
-      onSuccess: onClose,
-      isOpen,
+        initialData,
+        editingShareId,
+        onSuccess: onClose,
+        isOpen,
     })
 
     const { control, reset } = form
@@ -52,7 +52,7 @@ export function ShareForm({
                     <ConfigSection control={control} watch={watch} reset={reset} />
 
                     {/* 订阅选择 */}
-                    <SubscriptionSection control={control} />
+                    <SubscriptionSection control={control} fieldName="gen.filter.sub_id" />
 
                     {/* 过滤条件 */}
                     <FilterSection control={control} />
@@ -75,3 +75,4 @@ export function ShareForm({
         </Dialog>
     )
 }
+
