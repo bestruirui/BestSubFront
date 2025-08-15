@@ -1,6 +1,5 @@
 import "./globals.css";
-import { ThemeProvider } from "@/src/components/providers";
-import { AuthProvider } from "@/src/components/providers";
+import { ThemeProvider, AuthProvider, AlertProvider } from "@/src/components/providers";
 import { Toaster } from "sonner";
 
 export default function RootLayout({
@@ -19,8 +18,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            {children}
-            <Toaster position="top-center" richColors />
+            <AlertProvider>
+              {children}
+              <Toaster position="top-center" richColors />
+            </AlertProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>
