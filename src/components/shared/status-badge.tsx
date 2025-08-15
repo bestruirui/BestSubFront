@@ -1,5 +1,4 @@
 import { Badge } from "@/src/components/ui/badge"
-import { cn } from "@/src/utils"
 import type { ComponentProps } from "react"
 
 type BadgeVariant = ComponentProps<typeof Badge>["variant"]
@@ -11,20 +10,11 @@ interface StatusConfig {
 }
 
 const STATUS_CONFIG: Record<string, StatusConfig> = {
-    success: { variant: 'default', className: 'bg-green-500 hover:bg-green-600', text: '成功' },
-    running: { variant: 'default', className: 'bg-blue-500 hover:bg-blue-600', text: '运行中' },
-    failed: { variant: 'destructive', className: '', text: '失败' },
-    pending: { variant: 'outline', className: '', text: '等待中' },
-
-    scheduled: { variant: 'default', className: 'bg-green-500 hover:bg-green-600', text: '已调度' },
-    disabled: { variant: 'secondary', className: '', text: '已停用' },
-    enable: { variant: 'default', className: 'bg-green-500 hover:bg-green-600', text: '已启用' },
-} as const
-
-const DISABLED_CONFIG: StatusConfig = {
-    variant: "secondary",
-    className: "",
-    text: "已停用"
+    running: { variant: 'default', className: 'bg-blue-500 hover:bg-blue-600 text-white', text: '运行中' },
+    scheduled: { variant: 'default', className: 'bg-teal-500 hover:bg-teal-600 text-white', text: '已调度' },
+    pending: { variant: 'default', className: 'bg-yellow-500 hover:bg-yellow-600 text-white', text: '等待中' },
+    disabled: { variant: 'secondary', className: 'bg-gray-500 hover:bg-gray-600 text-white', text: '已停用' },
+    enabled: { variant: 'default', className: 'bg-green-500 hover:bg-green-600 text-white', text: '已启用' },
 } as const
 
 const getUnknownConfig = (status: string): StatusConfig => ({
@@ -33,25 +23,11 @@ const getUnknownConfig = (status: string): StatusConfig => ({
     text: status || "未知"
 })
 
-export interface StatusBadgeProps {
-    status: string
-    enable: boolean
-    className?: string
-}
-
-export function StatusBadge({ status, enable, className }: StatusBadgeProps) {
-    if (!enable) {
-        return (
-            <Badge variant={DISABLED_CONFIG.variant} className={cn(DISABLED_CONFIG.className, className)}>
-                {DISABLED_CONFIG.text}
-            </Badge>
-        )
-    }
-
+export function StatusBadge({ status }: { status: string }) {
     const config = STATUS_CONFIG[status] || getUnknownConfig(status)
 
     return (
-        <Badge variant={config.variant} className={cn(config.className, className)}>
+        <Badge variant={config.variant} className={config.className}>
             {config.text}
         </Badge>
     )
