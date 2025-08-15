@@ -1,58 +1,74 @@
 import { useEffect, useState, useCallback } from "react"
 import { Button } from "@/src/components/ui/button"
 import { Plus } from "lucide-react"
-import { api } from "@/src/lib/api/client"
-import { useShareForm } from "../hooks/useShareForm"
-import { useShareOperations } from "../hooks/useShareOperations"
+import { useShareStore } from "@/src/store/shareStore"
 import { ShareForm } from "./share-form"
 import { ShareList } from "./share-list"
-import { DialogContainer } from "@/src/components/ui/dialog-container"
-import type { ShareResponse } from "@/src/types/share"
+import { ShareCopyDialog } from "./share-copy"
+import { UI_TEXT } from "../constants"
+import type { ShareResponse, ShareRequest } from "@/src/types/share"
 
 export function SharePage() {
-    const [shares, setShares] = useState<ShareResponse[]>([])
-    const [isLoading, setIsLoading] = useState(true)
+    const shareStore = useShareStore()
 
-    const loadShares = useCallback(async () => {
-        try {
-            const data = await api.getShares()
-            setShares(Array.isArray(data) ? data : [])
-        } catch (error) {
-            console.error('Failed to load shares:', error)
-            setShares([])
-        } finally {
-            setIsLoading(false)
-        }
+    // 表单状态
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [editingShare, setEditingShare] = useState<ShareResponse | null>(null)
+    const [formData, setFormData] = useState<ShareRequest | undefined>(undefined)
+
+    // 复制对话框状态
+    const [isCopyDialogOpen, setIsCopyDialogOpen] = useState(false)
+    const [copyUrl, setCopyUrl] = useState('')
+
+    // 加载分享列表
+    useEffect(() => {
+        shareStore.loadShares()
+    }, [shareStore])
+
+    // 打开编辑对话框
+    const openEditDialog = useCallback((share: ShareResponse) => {
+        setEditingShare(share)
+        // 从 ShareResponse 转换为 ShareRequest，移除只读字段
+        const { id, access_count, ...shareRequest } = share
+        setFormData(shareRequest)
+        setIsDialogOpen(true)
     }, [])
 
-    useEffect(() => {
-        loadShares()
-    }, [loadShares])
+    // 打开创建对话框
+    const openCreateDialog = useCallback(() => {
+        setEditingShare(null)
+        setFormData(undefined)
+        setIsDialogOpen(true)
+    }, [])
 
-    const {
-        formData,
-        editingShare,
-        isDialogOpen,
-        isLoadingEdit,
-        updateFormField,
-        updateConfigField,
-        updateFilterField,
-        handleSubmit,
-        handleEdit,
-        openCreateDialog,
-        closeDialog,
-    } = useShareForm({ onSuccess: loadShares })
+    // 关闭表单对话框
+    const closeFormDialog = useCallback(() => {
+      setIsDialogOpen(false)
+      // 延迟清理状态，等待对话框关闭动画完成
+      setTimeout(() => {
+        setEditingShare(null)
+        setFormData(undefined)
+      }, 200) // 对话框关闭动画通常是 150-200ms
+    }, [])
 
-    const {
-        deletingId,
-        confirmState,
-        handleDelete,
-        closeConfirm,
-        handleConfirm,
-    } = useShareOperations({ onSuccess: loadShares })
+    // 打开复制对话框
+    const openCopyDialog = useCallback((fullUrl: string) => {
+        setCopyUrl(fullUrl)
+        setIsCopyDialogOpen(true)
+    }, [])
+
+    // 关闭复制对话框
+    const closeCopyDialog = useCallback(() => {
+        setIsCopyDialogOpen(false)
+        setCopyUrl('')
+    }, [])
+
+    // 获取表单标题
+    const formTitle = editingShare ? UI_TEXT.EDIT_SHARE : UI_TEXT.CREATE_SHARE
 
     return (
         <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+            {/* 页面头部 */}
             <div className="flex items-center justify-between px-4 lg:px-6">
                 <div>
                     <h1 className="text-2xl font-bold">分享管理</h1>
@@ -60,36 +76,32 @@ export function SharePage() {
 
                 <Button onClick={openCreateDialog}>
                     <Plus className="h-4 w-4 mr-2" />
-                    创建分享
+                    {UI_TEXT.CREATE_SHARE}
                 </Button>
             </div>
 
+            {/* 分享表单对话框 */}
             <ShareForm
-                formData={formData}
-                editingShare={editingShare}
-                isDialogOpen={isDialogOpen}
-                updateFormField={updateFormField}
-                updateConfigField={updateConfigField}
-                updateFilterField={updateFilterField}
-                handleSubmit={handleSubmit}
-                onOpenChange={closeDialog}
+                {...(formData && { initialData: formData })}
+                formTitle={formTitle}
+                isOpen={isDialogOpen}
+                onClose={closeFormDialog}
+                editingShareId={editingShare?.id}
             />
 
+            {/* 分享列表 */}
             <div className="px-4 lg:px-6">
                 <ShareList
-                    shares={shares}
-                    isLoading={isLoading}
-                    deletingId={deletingId}
-                    isLoadingEdit={isLoadingEdit}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
+                    onEdit={openEditDialog}
+                    openCopyDialog={openCopyDialog}
                 />
             </div>
 
-            <DialogContainer
-                confirmState={confirmState}
-                onConfirmClose={closeConfirm}
-                onConfirmAction={handleConfirm}
+            {/* 复制链接对话框 */}
+            <ShareCopyDialog
+                fullUrl={copyUrl}
+                isOpen={isCopyDialogOpen}
+                onClose={closeCopyDialog}
             />
         </div>
     )

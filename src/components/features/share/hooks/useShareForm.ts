@@ -1,156 +1,68 @@
-import { useState, useCallback } from 'react'
-import { api } from '@/src/lib/api/client'
-import { useFormUpdate } from '@/src/lib/hooks'
-import type { ShareResponse, ShareRequest } from '@/src/types/share'
+import { useForm } from 'react-hook-form'
+import { useEffect, useMemo } from 'react'
+import { toast } from 'sonner'
+import { useShareStore } from '@/src/store/shareStore'
+import { generateToken, createDefaultShareData } from '../utils'
+import { UI_TEXT } from '../constants'
+import type { ShareRequest } from '@/src/types'
 
 interface UseShareFormProps {
-    onSuccess: () => void
+    initialData?: ShareRequest | undefined
+    editingShareId?: number | undefined
+    onSuccess?: () => void
+    isOpen?: boolean
 }
 
-const DEFAULT_FORM_DATA: ShareRequest = {
-    name: "",
-    enable: true,
-    token: "",
-    config: {
-        template: "clash",
-        max_access_count: 0,
-        expires: 24,
-        sub_id: [],
-        filter: {
-            sub_id: [],
-            speed_up_more: 0,
-            speed_down_more: 0,
-            country: [],
-            delay_less_than: 0,
-            alive_status: 0,
-            risk_less_than: 0,
-        },
-    },
-}
+export function useShareForm({
+    initialData,
+    editingShareId,
+    onSuccess,
+    isOpen = true
+}: UseShareFormProps = {}) {
+    const shareStore = useShareStore()
 
-function validateShareForm(data: ShareRequest): { isValid: boolean; errors: string[] } {
-    const errors: string[] = []
+    const defaultData = useMemo(() => createDefaultShareData(), [])
 
-    if (!data.name.trim()) {
-        errors.push('请输入分享名称')
-    }
+    const form = useForm<ShareRequest>({
+        defaultValues: initialData || defaultData
+    })
 
-    if (data.config.sub_id.length === 0) {
-        errors.push('请至少选择一个订阅ID')
-    }
+    const { handleSubmit, reset, watch } = form
 
-    return {
-        isValid: errors.length === 0,
-        errors
-    }
-}
-
-export function useShareForm({ onSuccess }: UseShareFormProps) {
-    const [formData, setFormData] = useState<ShareRequest>(DEFAULT_FORM_DATA)
-    const [editingShare, setEditingShare] = useState<ShareResponse | null>(null)
-    const [isDialogOpen, setIsDialogOpen] = useState(false)
-    const [isLoadingEdit, setIsLoadingEdit] = useState(false)
-
-    const { updateFormField, updateConfigField } = useFormUpdate(setFormData)
-
-    const updateFilterField = useCallback(<K extends keyof ShareRequest['config']['filter']>(
-        field: K,
-        value: ShareRequest['config']['filter'][K]
-    ) => {
-        setFormData(prev => ({
-            ...prev,
-            config: {
-                ...prev.config,
-                filter: {
-                    ...prev.config.filter,
-                    [field]: value
-                }
-            }
-        }))
-    }, [])
-
-
-    const handleSubmit = useCallback(async (e: React.FormEvent) => {
-        e.preventDefault()
-
-        const validation = validateShareForm(formData)
-        if (!validation.isValid) {
-            return
+    useEffect(() => {
+        if (isOpen) {
+            reset(initialData || defaultData)
         }
+    }, [initialData, reset, defaultData, isOpen])
 
+    const onSubmit = async (data: ShareRequest) => {
         try {
+            const token = data.token || generateToken()
             const submitData: ShareRequest = {
-                name: formData.name,
-                enable: formData.enable,
-                token: formData.token,
-                config: formData.config,
+                ...data,
+                token,
             }
 
-            if (editingShare) {
-                await api.updateShare(editingShare.id, submitData)
+            if (editingShareId) {
+                await shareStore.updateShare(editingShareId, submitData)
+                toast.success(UI_TEXT.UPDATE_SUCCESS)
             } else {
-                await api.createShare(submitData)
+                await shareStore.createShare(submitData)
+                toast.success(UI_TEXT.CREATE_SUCCESS)
             }
 
-            setIsDialogOpen(false)
-            setEditingShare(null)
-            setFormData(DEFAULT_FORM_DATA)
-            onSuccess()
+            onSuccess?.()
         } catch (error) {
+            const errorMessage = editingShareId ? UI_TEXT.UPDATE_FAILED : UI_TEXT.CREATE_FAILED
+            toast.error(errorMessage)
             console.error('Failed to save share:', error)
         }
-    }, [formData, editingShare, onSuccess])
-
-    const handleEdit = useCallback((share: ShareResponse) => {
-        setIsLoadingEdit(true)
-        setEditingShare(share)
-        setFormData({
-            name: share.name,
-            enable: share.enable,
-            token: share.token,
-            config: {
-                template: share.config.template || "clash",
-                max_access_count: share.config.max_access_count || 0,
-                expires: share.config.expires || 24,
-                sub_id: share.config.sub_id || [],
-                filter: {
-                    sub_id: share.config.filter.sub_id || [],
-                    speed_up_more: share.config.filter.speed_up_more || 0,
-                    speed_down_more: share.config.filter.speed_down_more || 0,
-                    country: share.config.filter.country || [],
-                    delay_less_than: share.config.filter.delay_less_than || 0,
-                    alive_status: share.config.filter.alive_status || 0,
-                    risk_less_than: share.config.filter.risk_less_than || 0,
-                },
-            },
-        })
-        setIsDialogOpen(true)
-        setIsLoadingEdit(false)
-    }, [])
-
-    const openCreateDialog = useCallback(() => {
-        setEditingShare(null)
-        setFormData(DEFAULT_FORM_DATA)
-        setIsDialogOpen(true)
-    }, [])
-
-    const closeDialog = useCallback(() => {
-        setIsDialogOpen(false)
-        setEditingShare(null)
-        setFormData(DEFAULT_FORM_DATA)
-    }, [])
+    }
 
     return {
-        formData,
-        editingShare,
-        isDialogOpen,
-        isLoadingEdit,
-        updateFormField,
-        updateConfigField,
-        updateFilterField,
-        handleSubmit,
-        handleEdit,
-        openCreateDialog,
-        closeDialog,
+        form,
+        onSubmit: handleSubmit(onSubmit),
+        watch,
+        isEditing: !!editingShareId,
     }
 }
