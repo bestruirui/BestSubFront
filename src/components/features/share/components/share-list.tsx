@@ -60,7 +60,7 @@ export function ShareList({ onEdit, openCopyDialog }: ShareListProps) {
     return (
         <Card>
             <CardContent>
-                <Table>
+                <Table className="overflow-x-hidden">
                     <TableBody>
                         {sortedShares.map((share) => (
                             <TableRow key={share.id}>
@@ -71,10 +71,7 @@ export function ShareList({ onEdit, openCopyDialog }: ShareListProps) {
                                 </TableCell>
 
                                 <TableCell>
-                                    <StatusBadge
-                                        status={share.enable ? 'enable' : 'disable'}
-                                        enable={share.enable}
-                                    />
+                                    <StatusBadge status={share.enable ? 'enabled' : 'disabled'} />
                                 </TableCell>
 
                                 <TableCell>
@@ -94,34 +91,32 @@ export function ShareList({ onEdit, openCopyDialog }: ShareListProps) {
                                 </TableCell>
 
                                 <TableCell className="text-right">
-                                    <div className="flex gap-1">
-                                        <Button
-                                            size="sm"
-                                            variant="outline"
-                                            onClick={() => onCopyClick(share.token)}
-                                            title={UI_TEXT.COPY}
-                                        >
-                                            <Copy className="h-4 w-4" />
-                                        </Button>
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => onCopyClick(share.token)}
+                                        title={UI_TEXT.COPY}
+                                    >
+                                        <Copy className="h-4 w-4" />
+                                    </Button>
 
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => onEdit(share)}
-                                            title="编辑"
-                                        >
-                                            <Edit className="h-4 w-4" />
-                                        </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => onEdit(share)}
+                                        title="编辑"
+                                    >
+                                        <Edit className="h-4 w-4" />
+                                    </Button>
 
-                                        <Button
-                                            size="sm"
-                                            variant="outline"
-                                            onClick={() => onDeleteClick(share.id, share.name)}
-                                            title={UI_TEXT.DELETE}
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                    </div>
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => onDeleteClick(share.id, share.name)}
+                                        title={UI_TEXT.DELETE}
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
                                 </TableCell>
                             </TableRow>
                         ))}
