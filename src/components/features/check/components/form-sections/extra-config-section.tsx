@@ -4,11 +4,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/src/components/ui/input'
 import { Label } from '@/src/components/ui/label'
 import { Switch } from '@/src/components/ui/switch'
-import { Textarea } from '@/src/components/ui/textarea'
 import { useCheckStore } from '@/src/store/checkStore'
 import { UI_TEXT } from '../../constants'
 import type { CheckRequest } from '@/src/types/check'
 import type { DynamicConfigItem } from '@/src/types/common'
+
 
 export function ExtraConfigSection({ control }: { control: Control<CheckRequest> }) {
     const checkStore = useCheckStore()
@@ -30,7 +30,7 @@ export function ExtraConfigSection({ control }: { control: Control<CheckRequest>
     const renderConfigField = (config: DynamicConfigItem) => {
         return (
             <Controller
-                name={`config.${config.key}` as any}
+                name={`config.${config.key}`}
                 control={control}
                 render={({ field }) => {
                     const isEmpty = isConfigFieldEmpty(config.type, field.value)
@@ -72,7 +72,7 @@ export function ExtraConfigSection({ control }: { control: Control<CheckRequest>
                                 <Input
                                     type="number"
                                     placeholder={`请输入${config.name}`}
-                                    value={field.value ?? config.default ?? ''}
+                                    value={field.value as string || config.default || ''}
                                     onChange={(e) => field.onChange(Number(e.target.value) || 0)}
                                     className={showError ? 'border-red-500' : ''}
                                 />
@@ -83,7 +83,7 @@ export function ExtraConfigSection({ control }: { control: Control<CheckRequest>
                                 <div className="flex items-center justify-between w-full">
                                     <span className="text-sm font-medium">{config.name}</span>
                                     <Switch
-                                        checked={field.value ?? (config.default === 'true')}
+                                        checked={field.value as boolean || config.default === 'true'}
                                         onCheckedChange={field.onChange}
                                     />
                                 </div>
@@ -180,7 +180,7 @@ export function ExtraConfigSection({ control }: { control: Control<CheckRequest>
                                         </p>
                                     )}
                                     <Controller
-                                        name={`config.${config.key}` as any}
+                                        name={`config.${config.key}`}
                                         control={control}
                                         render={({ field: configField }) => {
                                             const isEmpty = isConfigFieldEmpty(config.type, configField.value)

@@ -38,7 +38,6 @@ export function useCheckForm({
         }
     }, [initialData, reset, defaultData, isOpen])
 
-
     const onSubmit = async (data: CheckRequest) => {
         const validation = validateCheckForm(data)
         if (!validation.isValid) {
@@ -67,11 +66,7 @@ export function useCheckForm({
         }
     }
 
-    useEffect(() => {
-        if (isOpen && Object.keys(checkStore.checkTypes).length === 0) {
-            checkStore.loadCheckTypes()
-        }
-    }, [isOpen, checkStore.checkTypes])
+
 
     return {
         form,
