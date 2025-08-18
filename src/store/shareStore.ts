@@ -6,6 +6,7 @@ interface ShareStore {
   shares: ShareResponse[]
   isLoading: boolean
   error: string | null
+  initialized: boolean
 
   loadShares: () => Promise<ShareResponse[]>
   createShare: (data: ShareRequest) => Promise<ShareResponse>
@@ -19,11 +20,12 @@ export const useShareStore = create<ShareStore>((set, get) => ({
   shares: [],
   isLoading: false,
   error: null,
+  initialized: false,
 
   loadShares: async () => {
     const state = get()
 
-    if (state.shares.length > 0 && !state.isLoading) {
+    if (state.initialized && !state.isLoading) {
       return state.shares
     }
 
@@ -42,7 +44,8 @@ export const useShareStore = create<ShareStore>((set, get) => ({
       set({
         shares: Array.isArray(shares) ? shares : [],
         isLoading: false,
-        error: null
+        error: null,
+        initialized: true
       })
 
       return shares
@@ -50,7 +53,8 @@ export const useShareStore = create<ShareStore>((set, get) => ({
       const errorMessage = error instanceof Error ? error.message : 'Failed to load shares'
       set({
         error: errorMessage,
-        isLoading: false
+        isLoading: false,
+        initialized: true
       })
       console.error('Failed to load shares:', error)
       return []
@@ -132,7 +136,8 @@ export const useShareStore = create<ShareStore>((set, get) => ({
   clearCache: () => {
     set({
       shares: [],
-      error: null
+      error: null,
+      initialized: false
     })
   }
 }))

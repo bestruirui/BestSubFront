@@ -4,10 +4,9 @@ import type { SubResponse, SubRequest } from '@/src/types'
 
 interface SubStore {
   subs: SubResponse[]
-
   isLoading: boolean
-
   error: string | null
+  initialized: boolean
 
   loadSubs: () => Promise<SubResponse[]>
   createSub: (data: SubRequest) => Promise<SubResponse>
@@ -20,11 +19,12 @@ export const useSubStore = create<SubStore>((set, get) => ({
   subs: [],
   isLoading: false,
   error: null,
+  initialized: false,
 
   loadSubs: async () => {
     const state = get()
 
-    if (state.subs.length > 0 && !state.isLoading) {
+    if (state.initialized && !state.isLoading) {
       return state.subs
     }
 
@@ -43,7 +43,8 @@ export const useSubStore = create<SubStore>((set, get) => ({
       set({
         subs,
         isLoading: false,
-        error: null
+        error: null,
+        initialized: true
       })
 
       return subs
@@ -51,7 +52,8 @@ export const useSubStore = create<SubStore>((set, get) => ({
       const errorMessage = error instanceof Error ? error.message : 'Failed to load subscriptions'
       set({
         error: errorMessage,
-        isLoading: false
+        isLoading: false,
+        initialized: true
       })
       console.error('Failed to load subscriptions:', error)
       return []
@@ -132,7 +134,8 @@ export const useSubStore = create<SubStore>((set, get) => ({
   clearCache: () => {
     set({
       subs: [],
-      error: null
+      error: null,
+      initialized: false
     })
   }
 }))
