@@ -1,6 +1,6 @@
 import { API_PATH } from '../config/config'
 import { tokenManager } from './token-manager'
-import type { LoginResponse, UserInfo, ApiResponse, SubResponse, CheckResponse, CheckRequest, HealthResponse, SubRequest, DynamicConfigItem, SubNameAndID, NotifyResponse, NotifyRequest, NotifyTemplate, NotifyChannel, NotifyChannelConfigResponse, ShareResponse, ShareRequest } from '../../types'
+import type { LoginResponse, UserInfo, ApiResponse, SubResponse, CheckResponse, CheckRequest, HealthResponse, SubRequest, DynamicConfigItem, SubNameAndID, NotifyResponse, NotifyRequest, NotifyTemplate, NotifyChannel, NotifyChannelConfigResponse, ShareResponse, ShareRequest, GroupSettingAdvance, Setting } from '@/src/types'
 
 const DEFAULT_REQUEST_HEADERS: Record<string, string> = {}
 
@@ -243,5 +243,12 @@ export const api = {
   },
   async deleteShare(id: number): Promise<void> {
     await apiClient.delete<ApiResponse<void>>(`${API_PATH.share}/${id}`)
+  },
+  async getSettings(): Promise<GroupSettingAdvance[]> {
+    const response = await apiClient.get<ApiResponse<GroupSettingAdvance[]>>(API_PATH.setting)
+    return response.data
+  },
+  async updateSettings(data: Setting[]): Promise<void> {
+    await apiClient.put<ApiResponse<void>>(API_PATH.setting, data)
   },
 }

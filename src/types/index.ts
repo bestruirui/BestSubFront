@@ -21,4 +21,7 @@ export * from './share'
 export * from './api'
 
 // 通用类型
-export * from './common' 
+export * from './common'
+
+// 设置相关类型
+export * from './setting'

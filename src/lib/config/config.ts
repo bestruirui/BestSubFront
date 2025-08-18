@@ -10,6 +10,7 @@ export const API_PATH = {
   check: '/api/v1/check',
   notify: '/api/v1/notify',
   share: '/api/v1/share',
+  setting: '/api/v1/setting',
   system: {
     health: '/api/v1/system/health',
     info: '/api/v1/system/info',
