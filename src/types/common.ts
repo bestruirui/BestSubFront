@@ -55,4 +55,9 @@ export type ConfigValue = string | number | boolean
  */
 export interface DynamicConfig {
     [key: string]: ConfigValue
-} 
+}
+
+export interface KeyValue {
+    key: string
+    value: string
+}

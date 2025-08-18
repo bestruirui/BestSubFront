@@ -151,16 +151,8 @@ export const api = {
     const response = await apiClient.get<ApiResponse<CheckResponse[]>>(url)
     return response.data
   },
-  async getCheckTypes(): Promise<string[]> {
-    const response = await apiClient.get<ApiResponse<string[]>>(`${API_PATH.check}/type`)
-    return response.data
-  },
-  async getCheckTypeConfig(type?: string): Promise<Record<string, DynamicConfigItem[]> | DynamicConfigItem[]> {
-    const url = type
-      ? `${API_PATH.check}/type/config?type=${type}`
-      : `${API_PATH.check}/type/config`
-
-    const response = await apiClient.get<ApiResponse<Record<string, DynamicConfigItem[]>>>(url)
+  async getCheckTypes(): Promise<Record<string, DynamicConfigItem[]>> {
+    const response = await apiClient.get<ApiResponse<Record<string, DynamicConfigItem[]>>>(`${API_PATH.check}/type`)
     return response.data
   },
   async getSystemHealth(): Promise<HealthResponse> {

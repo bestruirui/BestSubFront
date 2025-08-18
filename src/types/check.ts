@@ -4,7 +4,15 @@ export interface CheckRequest {
     task: CheckTask
     config: Record<string, unknown>
 }
-
+export interface CheckResponse {
+    id: number
+    name: string
+    enable: boolean
+    config: Record<string, unknown>
+    result: CheckResult
+    task: CheckTask
+    status: string
+}
 
 export interface CheckResult {
     duration: number
@@ -22,14 +30,4 @@ export interface CheckTask {
     timeout: number
     type: string
     sub_id: number[]
-}
-
-export interface CheckResponse {
-    id: number
-    name: string
-    enable: boolean
-    config: Record<string, unknown>
-    result: CheckResult
-    task: CheckTask
-    status: string
 }

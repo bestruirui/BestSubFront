@@ -54,3 +54,9 @@ export function formatLastRunTime(lastRun: string | undefined): string {
     }
 }
 
+/**
+ * 格式化布尔值显示
+ */
+export function formatBooleanText(value: boolean): string {
+    return value ? '启用' : '禁用'
+}
