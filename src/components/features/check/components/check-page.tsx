@@ -1,64 +1,43 @@
 import { useEffect, useState, useCallback } from "react"
 import { Button } from "@/src/components/ui/button"
 import { Plus } from "lucide-react"
-import { api } from "@/src/lib/api/client"
-import { useCheckForm } from "../hooks/useCheckForm"
-import { useCheckOperations } from "../hooks/useCheckOperations"
+import { useCheckStore } from "@/src/store/checkStore"
 import { CheckForm } from "./check-form"
 import { CheckList } from "./check-list"
-import { DialogContainer } from "@/src/components/ui/dialog-container"
-import type { CheckResponse } from "@/src/types/check"
-
+import { UI_TEXT } from "../constants"
+import { convertCheckResponseToRequest } from "../utils"
+import type { CheckResponse, CheckRequest } from "@/src/types/check"
 export function CheckPage() {
-    const [checks, setChecks] = useState<CheckResponse[]>([])
-    const [isLoading, setIsLoading] = useState(true)
+    const checkStore = useCheckStore()
 
-    const loadChecks = useCallback(async () => {
-        try {
-            setIsLoading(true)
-            const data = await api.getChecks()
-            setChecks(Array.isArray(data) ? data : [])
-        } catch (error) {
-            console.error('Failed to load checks:', error)
-            setChecks([])
-        } finally {
-            setIsLoading(false)
-        }
-    }, [])
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const [editingCheck, setEditingCheck] = useState<CheckResponse | null>(null)
+    const [formData, setFormData] = useState<CheckRequest | undefined>(undefined)
 
     useEffect(() => {
-        loadChecks()
-    }, [loadChecks])
+        checkStore.loadChecks()
+    }, [checkStore])
 
-    const {
-        formData,
-        checkTypes,
-        checkTypeConfigs,
-        subList,
-        isLoadingTypes,
-        isLoadingConfigs,
-        isLoadingSubs,
-        isLoadingEdit,
-        editingCheck,
-        isDialogOpen,
-        updateFormField,
-        updateConfigField,
-        handleTypeChange,
-        handleSubmit,
-        handleEdit,
-        openCreateDialog,
-        closeDialog,
-    } = useCheckForm({ onSuccess: loadChecks })
+    const openEditDialog = useCallback((check: CheckResponse) => {
+        setEditingCheck(check)
+        setFormData(convertCheckResponseToRequest(check))
+        setIsDialogOpen(true)
+    }, [])
 
-    const {
-        runningId,
-        deletingId,
-        confirmState,
-        handleDelete,
-        handleRun,
-        closeConfirm,
-        handleConfirm,
-    } = useCheckOperations({ onSuccess: loadChecks })
+    const openCreateDialog = useCallback(() => {
+        setEditingCheck(null)
+        setFormData(undefined)
+        setIsDialogOpen(true)
+    }, [])
+
+    const closeFormDialog = useCallback(() => {
+        setIsDialogOpen(false)
+        setTimeout(() => {
+            setEditingCheck(null)
+            setFormData(undefined)
+        }, 200)
+    }, [])
+
 
     return (
         <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
@@ -69,45 +48,25 @@ export function CheckPage() {
 
                 <Button onClick={openCreateDialog}>
                     <Plus className="h-4 w-4 mr-2" />
-                    添加检测
+                    {UI_TEXT.CREATE_CHECK}
                 </Button>
             </div>
 
             <CheckForm
-                formData={formData}
-                editingCheck={editingCheck}
-                isDialogOpen={isDialogOpen}
-                checkTypes={checkTypes}
-                checkTypeConfigs={checkTypeConfigs}
-                subList={subList}
-                isLoadingTypes={isLoadingTypes}
-                isLoadingConfigs={isLoadingConfigs}
-                isLoadingSubs={isLoadingSubs}
-                updateFormField={updateFormField}
-                updateConfigField={updateConfigField}
-                handleTypeChange={handleTypeChange}
-                handleSubmit={handleSubmit}
-                onOpenChange={closeDialog}
+                {...(formData && { initialData: formData })}
+                formTitle={editingCheck ? UI_TEXT.EDIT_CHECK : UI_TEXT.CREATE_CHECK}
+                isOpen={isDialogOpen}
+                onClose={closeFormDialog}
+                editingCheckId={editingCheck?.id}
             />
 
             <div className="px-4 lg:px-6">
                 <CheckList
-                    checks={checks}
-                    isLoading={isLoading}
-                    runningId={runningId}
-                    deletingId={deletingId}
-                    isLoadingEdit={isLoadingEdit}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                    onRun={handleRun}
+                    checks={checkStore.checks}
+                    isLoading={checkStore.isLoading}
+                    onEdit={openEditDialog}
                 />
             </div>
-
-            <DialogContainer
-                confirmState={confirmState}
-                onConfirmClose={closeConfirm}
-                onConfirmAction={handleConfirm}
-            />
         </div>
     )
-} 
+}
