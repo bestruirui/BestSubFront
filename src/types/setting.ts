@@ -19,3 +19,7 @@ export interface Setting {
     key: string
     value: string
 }
+
+export interface FormValues {
+    [key: string]: string
+}

@@ -34,13 +34,21 @@ export function NavUser() {
   const { isMobile } = useSidebar()
   const { user, logout } = useAuth()
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
   if (!user) return null
+
+  const handleOpenSettings = () => {
+    setIsDropdownOpen(false)
+    setTimeout(() => {
+      setIsSettingsOpen(true)
+    }, 100)
+  }
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <DropdownMenu>
+        <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
@@ -87,7 +95,7 @@ export function NavUser() {
                 <IconUserCircle />
                 个人资料
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setIsSettingsOpen(true)}>
+              <DropdownMenuItem onClick={handleOpenSettings}>
                 <IconSettings />
                 系统设置
               </DropdownMenuItem>
