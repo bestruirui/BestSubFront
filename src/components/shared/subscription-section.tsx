@@ -4,7 +4,12 @@ import { Label } from '@/src/components/ui/label'
 import { Badge } from '@/src/components/ui/badge'
 import { useSubStore } from '@/src/store/subStore'
 
-export function SubscriptionSection({ control, fieldName }: { control: Control<any>, fieldName: string }) {
+interface SubscriptionSectionProps {
+    control: Control<Record<string, unknown> | any>
+    fieldName: string
+}
+
+export function SubscriptionSection({ control, fieldName }: SubscriptionSectionProps) {
     const subStore = useSubStore()
 
     const subList = useMemo(() =>
@@ -52,7 +57,7 @@ export function SubscriptionSection({ control, fieldName }: { control: Control<a
                     <div className="space-y-2">
                         <div className="flex flex-wrap gap-2">
                             {subList.map(sub => {
-                                const selectedSubIds = field.value || []
+                                const selectedSubIds = (field.value as number[]) || []
                                 const isSelected = selectedSubIds.includes(sub.id)
 
                                 const handleToggleSelection = (subId: number) => {

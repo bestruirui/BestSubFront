@@ -10,16 +10,16 @@ export function useFormUpdate<TFormData extends { config: unknown }>(
         setFormData(prev => {
             if (field.includes('.')) {
                 const [parentKey, childKey] = field.split('.') as [string, string]
-                const parent = (prev as any)[parentKey] ?? {}
+                const parent = (prev as Record<string, unknown>)[parentKey] as Record<string, unknown> ?? {}
                 return {
-                    ...(prev as any),
+                    ...prev,
                     [parentKey]: {
-                        ...(parent as any),
+                        ...parent,
                         [childKey]: value,
                     },
                 } as TFormData
             } else {
-                return { ...(prev as any), [field]: value } as TFormData
+                return { ...prev, [field]: value } as TFormData
             }
         })
     }, [setFormData])
@@ -29,8 +29,8 @@ export function useFormUpdate<TFormData extends { config: unknown }>(
         value: unknown
     ) => {
         setFormData(prev => ({
-            ...(prev as any),
-            config: { ...(prev as any).config, [field]: value } as any,
+            ...prev,
+            config: { ...(prev.config as Record<string, unknown>), [field]: value },
         }))
     }, [setFormData])
 

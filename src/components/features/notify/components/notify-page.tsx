@@ -7,7 +7,6 @@ import { NotifyList } from './notify-list'
 import { useNotifyForm } from '../hooks/useNotifyForm'
 import { useNotifyOperations } from '../hooks/useNotifyOperations'
 import type { NotifyResponse } from '@/src/types'
-import { DialogContainer } from "@/src/components/ui/dialog-container"
 
 export function NotifyPage() {
     const [notifies, setNotifies] = useState<NotifyResponse[]>([])
@@ -49,12 +48,9 @@ export function NotifyPage() {
     const {
         deletingId,
         testingId,
-        confirmState,
-        closeConfirm,
-        handleConfirm,
         handleDelete,
         handleTest
-    } = useNotifyOperations({ onSuccess: loadNotifies })
+    } = useNotifyOperations()
 
     const handleTestNotify = useCallback((notify: NotifyResponse) => {
         handleTest({
@@ -102,11 +98,6 @@ export function NotifyPage() {
                     onTest={handleTestNotify}
                 />
             </div>
-            <DialogContainer
-                confirmState={confirmState}
-                onConfirmClose={closeConfirm}
-                onConfirmAction={handleConfirm}
-            />
         </div>
     )
 } 

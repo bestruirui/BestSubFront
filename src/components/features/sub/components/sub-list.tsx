@@ -1,5 +1,4 @@
 import { Button } from "@/src/components/ui/button"
-import { Badge } from "@/src/components/ui/badge"
 import { Card, CardContent } from "@/src/components/ui/card"
 import { Table, TableBody, TableCell, TableRow } from "@/src/components/ui/table"
 import { InlineLoading } from "@/src/components/ui/loading"
@@ -71,10 +70,7 @@ export function SubList({
                                     <div className="text-sm text-muted-foreground">{sub?.cron_expr || 'N/A'}</div>
                                 </TableCell>
                                 <TableCell className="space-y-2 flex flex-col">
-                                    <StatusBadge status={sub.status} enable={sub.enable} />
-                                    <Badge variant="outline" className="text-xs w-fit">
-                                        {sub.config.type?.toUpperCase() || 'AUTO'}
-                                    </Badge>
+                                    <StatusBadge status={sub.status} />
                                 </TableCell>
                                 <TableCell className="text-xs space-y-1">
                                     <div>平均延迟: <span className="text-muted-foreground">{sub.info?.delay || 0}ms</span></div>

@@ -3,7 +3,7 @@ import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/components/ui/dialog"
-import { DynamicConfigForm } from "@/src/components/ui/dynamic-config-form"
+import { DynamicConfigForm } from "@/src/components/shared/dynamic-config-form"
 import type { DynamicConfigItem, NotifyResponse, NotifyRequest } from "@/src/types"
 
 interface NotifyFormProps {

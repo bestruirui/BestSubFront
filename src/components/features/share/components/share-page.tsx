@@ -29,7 +29,7 @@ export function SharePage() {
     const openEditDialog = useCallback((share: ShareResponse) => {
         setEditingShare(share)
         // 从 ShareResponse 转换为 ShareRequest，移除只读字段
-        const { id, access_count, ...shareRequest } = share
+        const { id: _id, access_count: _access_count, ...shareRequest } = share
         setFormData(shareRequest)
         setIsDialogOpen(true)
     }, [])

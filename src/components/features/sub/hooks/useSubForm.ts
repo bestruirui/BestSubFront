@@ -4,9 +4,6 @@ import { validateUrl, validateCronExpr } from '@/src/utils'
 import { useFormUpdate } from '@/src/lib/hooks'
 import type { SubResponse, SubRequest } from '@/src/types/sub'
 
-interface UseSubscriptionFormProps {
-    onSuccess: () => void
-}
 
 const DEFAULT_FORM_DATA: SubRequest = {
     name: "",
@@ -16,7 +13,6 @@ const DEFAULT_FORM_DATA: SubRequest = {
         url: "",
         proxy: false,
         timeout: 10,
-        type: 'auto',
     },
 }
 
@@ -41,7 +37,7 @@ function validateSubscriptionForm(data: SubRequest): { isValid: boolean; errors:
     }
 }
 
-export function useSubForm({ onSuccess }: UseSubscriptionFormProps) {
+export function useSubForm() {
     const [formData, setFormData] = useState<SubRequest>(DEFAULT_FORM_DATA)
     const [editingSubscription, setEditingSubscription] = useState<SubResponse | null>(null)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -78,11 +74,10 @@ export function useSubForm({ onSuccess }: UseSubscriptionFormProps) {
             setIsDialogOpen(false)
             setEditingSubscription(null)
             setFormData(DEFAULT_FORM_DATA)
-            onSuccess()
         } catch (error) {
             console.error('Failed to save subscription:', error)
         }
-    }, [formData, editingSubscription, onSuccess])
+    }, [formData, editingSubscription])
 
     const handleEdit = useCallback((subscription: SubResponse) => {
         setIsLoadingEdit(true)
@@ -95,7 +90,6 @@ export function useSubForm({ onSuccess }: UseSubscriptionFormProps) {
                 url: subscription.config.url || "",
                 proxy: subscription.config.proxy || false,
                 timeout: subscription.config.timeout || 10,
-                type: subscription.config.type || 'auto',
             },
         })
         setIsDialogOpen(true)

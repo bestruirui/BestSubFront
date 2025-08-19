@@ -38,7 +38,7 @@ export function SubDetail({
                                 <div className="text-muted-foreground"><span>名称:</span> {subscription.name}</div>
                                 <div className="text-muted-foreground"><span>Cron:</span> {subscription.cron_expr}</div>
                                 <div className="text-muted-foreground">
-                                    <span>状态:</span> <StatusBadge status={subscription.status} enable={subscription.enable} />
+                                    <span>状态:</span> <StatusBadge status={subscription.status} />
                                 </div>
                                 {subscription.result?.duration && (
                                     <div className="text-muted-foreground"><span>运行耗时:</span> {formatDuration(subscription.result.duration)}</div>
@@ -58,7 +58,6 @@ export function SubDetail({
                         <div className="space-y-3 text-sm">
                             <div className="text-muted-foreground"><span>订阅链接:</span> {subscription.config.url}</div>
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="text-muted-foreground"><span>订阅类型:</span> {subscription.config.type?.toUpperCase() || 'AUTO'}</div>
                                 <div className="text-muted-foreground"><span>使用代理:</span> {subscription.config.proxy ? '是' : '否'}</div>
                                 <div className="text-muted-foreground"><span>超时时间:</span> {subscription.config.timeout || 10}秒</div>
                             </div>

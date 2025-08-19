@@ -1,35 +1,13 @@
 import { useState, useCallback } from 'react'
 import { toast } from 'sonner'
+import { useAlert } from '@/src/components/providers'
 import { api } from '@/src/lib/api/client'
 import type { NotifyRequest } from '@/src/types'
-import { useConfirmDialog } from '@/src/lib/hooks'
 
-interface UseNotifyOperationsProps {
-    onSuccess: () => void
-}
-
-export function useNotifyOperations({ onSuccess }: UseNotifyOperationsProps) {
-    const [deletingId, setDeletingId] = useState<number | null>(null)
+export function useNotifyOperations() {
+    const { confirm } = useAlert()
     const [testingId, setTestingId] = useState<number | null>(null)
-
-    const { confirmState, showDeleteConfirm, closeConfirm, handleConfirm } = useConfirmDialog()
-
-
-    const handleDelete = useCallback((id: number, name: string) => {
-        showDeleteConfirm(name, async () => {
-            try {
-                setDeletingId(id)
-                await api.deleteNotify(id)
-                toast.success('通知配置删除成功')
-                onSuccess()
-            } catch (error) {
-                console.error('Failed to delete notify:', error)
-                toast.error('删除通知配置失败')
-            } finally {
-                setDeletingId(null)
-            }
-        })
-    }, [onSuccess, showDeleteConfirm])
+    const [deletingId, setDeletingId] = useState<number | null>(null)
 
     const handleTest = useCallback(async (notify: NotifyRequest, id?: number) => {
         try {
@@ -44,13 +22,33 @@ export function useNotifyOperations({ onSuccess }: UseNotifyOperationsProps) {
         }
     }, [])
 
+    const handleDelete = useCallback(async (id: number, name: string) => {
+        const confirmed = await confirm({
+            title: '删除通知',
+            description: `确定要删除通知配置 "${name}" 吗？`,
+            confirmText: '删除',
+            cancelText: '取消',
+            variant: 'destructive'
+        })
+
+        if (confirmed) {
+            try {
+                setDeletingId(id)
+                await api.deleteNotify(id)
+                toast.success('删除成功')
+            } catch (error) {
+                console.error('Failed to delete notify:', error)
+                toast.error('删除失败')
+            } finally {
+                setDeletingId(null)
+            }
+        }
+    }, [confirm])
+
     return {
         deletingId,
         testingId,
-        confirmState,
         handleDelete,
-        closeConfirm,
-        handleConfirm,
         handleTest
     }
 } 

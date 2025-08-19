@@ -72,12 +72,12 @@ export function AlertProvider({ children }: { children: React.ReactNode }) {
   const handleConfirm = useCallback(() => {
     alertState.resolve?.(true)
     setAlertState(prev => ({ ...prev, isOpen: false, resolve: null }))
-  }, [alertState.resolve])
+  }, [alertState])
 
   const handleCancel = useCallback(() => {
     alertState.resolve?.(false)
     setAlertState(prev => ({ ...prev, isOpen: false, resolve: null }))
-  }, [alertState.resolve])
+  }, [alertState])
 
   const handleOpenChange = useCallback((open: boolean) => {
     if (!open) {

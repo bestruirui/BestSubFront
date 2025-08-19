@@ -7,7 +7,6 @@ import { useSubOperations } from "../hooks/useSubOperations"
 import { SubForm } from "./sub-form"
 import { SubDetail } from "./sub-detail"
 import { SubList } from "./sub-list"
-import { DialogContainer } from "@/src/components/ui/dialog-container"
 import type { SubResponse } from "@/src/types/sub"
 
 export function SubPage() {
@@ -43,17 +42,14 @@ export function SubPage() {
         handleEdit,
         openCreateDialog,
         closeDialog,
-    } = useSubForm({ onSuccess: loadSub })
+    } = useSubForm()
 
     const {
         refreshingId,
         deletingId,
-        confirmState,
         handleDelete,
         handleRefresh,
-        closeConfirm,
-        handleConfirm,
-    } = useSubOperations({ onSuccess: loadSub })
+    } = useSubOperations()
 
     const showDetail = (subscription: SubResponse) => {
         setDetailSubscription(subscription)
@@ -101,12 +97,6 @@ export function SubPage() {
                 subscription={detailSubscription}
                 isOpen={isDetailDialogOpen}
                 onOpenChange={setIsDetailDialogOpen}
-            />
-
-            <DialogContainer
-                confirmState={confirmState}
-                onConfirmClose={closeConfirm}
-                onConfirmAction={handleConfirm}
             />
         </div>
     )
