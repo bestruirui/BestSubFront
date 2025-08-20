@@ -107,7 +107,10 @@ export function CheckList({
                                     <Button
                                         size="sm"
                                         variant="outline"
-                                        onClick={() => api.runCheck(check.id)}
+                                        onClick={() => {
+                                            api.runCheck(check.id)
+                                            toast.success(UI_TEXT.RUN_SUCCESS)
+                                        }}
                                         disabled={!check.enable || check.status === 'running'}
                                     >
                                         <Play className="h-4 w-4" />

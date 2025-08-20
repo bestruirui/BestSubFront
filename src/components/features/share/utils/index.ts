@@ -18,7 +18,7 @@ export function generateToken(): string {
  */
 export function buildShareUrl(token: string, baseUrl?: string): string {
     const origin = baseUrl || (typeof window !== 'undefined' ? window.location.origin : '')
-    return `${origin}/s/sub/${token}`
+    return `${origin}/api/v1/share/sub/${token}`
 }
 
 /**
