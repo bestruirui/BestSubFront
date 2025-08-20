@@ -92,8 +92,8 @@ export function useNotifyForm({ onSuccess }: UseNotifyFormProps) {
             configs.forEach(config => {
                 const value = processedConfig[config.key]
                 // 如果值为空且有 default 值，则使用 default 值
-                if ((value === undefined || value === '' || value === null) && config.default) {
-                    processedConfig[config.key] = config.default
+                if ((value === undefined || value === '' || value === null) && config.value) {
+                    processedConfig[config.key] = config.value
                 }
             })
 

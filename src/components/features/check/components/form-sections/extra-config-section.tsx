@@ -41,7 +41,7 @@ export function ExtraConfigSection({ control }: { control: Control<CheckRequest>
                             if (config.options) {
                                 return (
                                     <Select
-                                        value={field.value as string || config.default || ''}
+                                        value={field.value as string || config.value || ''}
                                         onValueChange={field.onChange}
                                     >
                                         <SelectTrigger className={showError ? 'border-red-500' : ''}>
@@ -61,7 +61,7 @@ export function ExtraConfigSection({ control }: { control: Control<CheckRequest>
                                 <Input
                                     type="text"
                                     placeholder={`请输入${config.name}`}
-                                    value={field.value as string || config.default || ''}
+                                    value={field.value as string || config.value || ''}
                                     onChange={(e) => field.onChange(e.target.value)}
                                     className={showError ? 'border-red-500' : ''}
                                 />
@@ -72,7 +72,7 @@ export function ExtraConfigSection({ control }: { control: Control<CheckRequest>
                                 <Input
                                     type="number"
                                     placeholder={`请输入${config.name}`}
-                                    value={field.value as string || config.default || ''}
+                                    value={field.value as string || config.value || ''}
                                     onChange={(e) => field.onChange(Number(e.target.value) || 0)}
                                     className={showError ? 'border-red-500' : ''}
                                 />
@@ -83,7 +83,7 @@ export function ExtraConfigSection({ control }: { control: Control<CheckRequest>
                                 <div className="flex items-center justify-between w-full">
                                     <span className="text-sm font-medium">{config.name}</span>
                                     <Switch
-                                        checked={field.value as boolean || config.default === 'true'}
+                                        checked={field.value as boolean || config.value === 'true'}
                                         onCheckedChange={field.onChange}
                                     />
                                 </div>
@@ -94,7 +94,7 @@ export function ExtraConfigSection({ control }: { control: Control<CheckRequest>
                                 <Input
                                     type="text"
                                     placeholder={`请输入${config.name}`}
-                                    value={field.value as string || config.default || ''}
+                                    value={field.value as string || config.value || ''}
                                     onChange={(e) => field.onChange(e.target.value)}
                                     className={showError ? 'border-red-500' : ''}
                                 />

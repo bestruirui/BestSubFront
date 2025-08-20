@@ -39,7 +39,7 @@ export interface DynamicConfigItem {
     name: string
     key: string
     type: string
-    default: string
+    value: string
     options: string
     require: boolean
     desc: string

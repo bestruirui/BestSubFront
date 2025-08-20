@@ -39,12 +39,12 @@ export function DynamicConfigForm({
                         <Select
                             value={value as string || ''}
                             onValueChange={(val) => {
-                                const finalValue = val === '' && config.default ? config.default : val
+                                const finalValue = val === '' && config.value ? config.value : val
                                 onConfigChange(config.key, finalValue)
                             }}
                         >
                             <SelectTrigger className={showError ? 'border-red-500' : ''}>
-                                <SelectValue placeholder={config.default || `请选择${config.name}`} />
+                                <SelectValue placeholder={config.value || `请选择${config.name}`} />
                             </SelectTrigger>
                             <SelectContent>
                                 {config.options.split(',').map((option: string) => (
@@ -59,11 +59,11 @@ export function DynamicConfigForm({
                 return (
                     <Input
                         type="text"
-                        placeholder={config.default || `请输入${config.name}`}
+                        placeholder={config.value || `请输入${config.name}`}
                         value={value as string || ''}
                         onChange={(e) => {
                             const inputValue = e.target.value
-                            const finalValue = inputValue === '' && config.default ? config.default : inputValue
+                            const finalValue = inputValue === '' && config.value ? config.value : inputValue
                             onConfigChange(config.key, finalValue)
                         }}
                         className={showError ? 'border-red-500' : ''}
@@ -74,12 +74,12 @@ export function DynamicConfigForm({
                 return (
                     <Input
                         type="number"
-                        placeholder={config.default || `请输入${config.name}`}
+                        placeholder={config.value || `请输入${config.name}`}
                         value={value as number || ''}
                         onChange={(e) => {
                             const inputValue = e.target.value
                             if (inputValue === '') {
-                                const finalValue = config.default || ''
+                                const finalValue = config.value || ''
                                 onConfigChange(config.key, finalValue)
                             } else {
                                 onConfigChange(config.key, Number(inputValue))
@@ -103,11 +103,11 @@ export function DynamicConfigForm({
             case 'textarea':
                 return (
                     <Textarea
-                        placeholder={config.default || `请输入${config.name}`}
+                        placeholder={config.value || `请输入${config.name}`}
                         value={value as string || ''}
                         onChange={(e) => {
                             const inputValue = e.target.value
-                            const finalValue = inputValue === '' && config.default ? config.default : inputValue
+                            const finalValue = inputValue === '' && config.value ? config.value : inputValue
                             onConfigChange(config.key, finalValue)
                         }}
                         className={showError ? 'border-red-500' : ''}
@@ -119,11 +119,11 @@ export function DynamicConfigForm({
                 return (
                     <Input
                         type="text"
-                        placeholder={config.default || `请输入${config.name}`}
+                        placeholder={config.value || `请输入${config.name}`}
                         value={value as string || ''}
                         onChange={(e) => {
                             const inputValue = e.target.value
-                            const finalValue = inputValue === '' && config.default ? config.default : inputValue
+                            const finalValue = inputValue === '' && config.value ? config.value : inputValue
                             onConfigChange(config.key, finalValue)
                         }}
                         className={showError ? 'border-red-500' : ''}
