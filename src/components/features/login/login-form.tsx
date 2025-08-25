@@ -3,7 +3,13 @@
 import { useState } from "react"
 import { cn } from "@/src/utils"
 import { Button } from "@/src/components/ui/button"
-import { Card, CardContent } from "@/src/components/ui/card"
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/src/components/ui/card"
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { ApiError } from "@/src/lib/api/client"
@@ -58,17 +64,16 @@ export function LoginForm({
 
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
-            <Card className="overflow-hidden p-0">
-                <CardContent className="grid p-0 md:grid-cols-2">
-                    <form className="p-6 md:p-8" onSubmit={handleSubmit}>
+            <Card>
+                <CardHeader>
+                    <CardTitle>登录到您的账户</CardTitle>
+                    <CardDescription>
+                        输入您的用户名和密码来登录
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleSubmit}>
                         <div className="flex flex-col gap-6">
-                            <div className="flex flex-col items-center text-center">
-                                <h1 className="text-2xl font-bold">欢迎回来</h1>
-                                <p className="text-muted-foreground text-balance">
-                                    登录到您的 BestSub 账户
-                                </p>
-                            </div>
-
                             {error && (
                                 <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md dark:bg-red-950 dark:text-red-400 dark:border-red-800">
                                     {error}
@@ -84,11 +89,19 @@ export function LoginForm({
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
                                     disabled={isLoading}
+                                    required
                                 />
                             </div>
-
                             <div className="grid gap-3">
-                                <Label htmlFor="password">密码</Label>
+                                <div className="flex items-center">
+                                    <Label htmlFor="password">密码</Label>
+                                    <a
+                                        href="#"
+                                        className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                                    >
+                                        忘记密码？
+                                    </a>
+                                </div>
                                 <Input
                                     id="password"
                                     type="password"
@@ -96,40 +109,29 @@ export function LoginForm({
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     disabled={isLoading}
+                                    required
                                 />
                             </div>
-                            <Button
-                                type="submit"
-                                className="w-full"
-                                disabled={isLoading || !username.trim() || !password}
-                            >
-                                {isLoading ? (
-                                    <>
-                                        <Spinner size="sm" className="mr-2 border-white" />
-                                        登录中...
-                                    </>
-                                ) : (
-                                    "登录"
-                                )}
-                            </Button>
-                        </div>
-                    </form>
-                    <div className="bg-muted relative hidden md:block">
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700">
-                            <div className="absolute inset-0 bg-black/20"></div>
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="text-center text-white">
-                                    <h2 className="text-3xl font-bold mb-4">BestSub</h2>
-                                    <p className="text-lg opacity-90">安全、高效的订阅管理平台</p>
-                                </div>
+                            <div className="flex flex-col gap-3">
+                                <Button
+                                    type="submit"
+                                    className="w-full"
+                                    disabled={isLoading || !username.trim() || !password}
+                                >
+                                    {isLoading ? (
+                                        <>
+                                            <Spinner size="sm" className="mr-2 border-white" />
+                                            登录中...
+                                        </>
+                                    ) : (
+                                        "登录"
+                                    )}
+                                </Button>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </CardContent>
             </Card>
-            <div className="text-muted-foreground text-center text-xs text-balance">
-                登录即表示您同意我们的服务条款和隐私政策
-            </div>
         </div>
     )
 }
