@@ -33,6 +33,15 @@ export function ExtraConfigSection({ control }: { control: Control<CheckRequest>
                 name={`config.${config.key}`}
                 control={control}
                 render={({ field }) => {
+                    if (field.value === undefined || field.value === null || field.value === '') {
+                        if (config.type === 'boolean') {
+                            field.onChange(config.value === 'true')
+                        } else if (config.type === 'number') {
+                            field.onChange(Number(config.value) || 0)
+                        } else {
+                            field.onChange(config.value || '')
+                        }
+                    }
                     const isEmpty = isConfigFieldEmpty(config.type, field.value)
                     const showError = config.require && isEmpty
 
