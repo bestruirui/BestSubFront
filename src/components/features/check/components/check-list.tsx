@@ -92,7 +92,7 @@ export function CheckList({
                                 </TableCell>
 
                                 <TableCell className="text-xs space-y-1">
-                                    <div>超时时间: <span className="text-muted-foreground">{check.task?.timeout || 0}秒</span> </div>
+                                    <div>超时时间: <span className="text-muted-foreground">{check.task?.timeout || 0}分钟</span> </div>
                                     <div>通知: <span className="text-muted-foreground">{formatBooleanText(check.task?.notify ?? false)}</span></div>
                                     <div>日志: <span className="text-muted-foreground">{formatBooleanText(check.task?.log_write_file ?? false)}</span></div>
                                 </TableCell>

@@ -14,7 +14,7 @@ export function BasicConfigSection({ control }: { control: Control<CheckRequest>
                 render={({ field }) => (
                     <div>
                         <Label htmlFor="timeout" className="mb-2 block">
-                            超时时间(秒)
+                            超时时间(分钟)
                         </Label>
                         <Input
                             id="timeout"
