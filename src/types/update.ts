@@ -31,5 +31,5 @@ export interface SystemVersion {
   /** 仓库地址 */
   repo: string
   /** Subconverter 版本 */
-  subConverterVersion: string
+  subconverter_version: string
 }
