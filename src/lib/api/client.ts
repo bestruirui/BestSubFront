@@ -1,6 +1,6 @@
 import { API_PATH } from '../config/config'
 import { tokenManager } from './token-manager'
-import type { LoginResponse, UserInfo, ApiResponse, SubResponse, CheckResponse, CheckRequest, HealthResponse, SubRequest, DynamicConfigItem, SubNameAndID, NotifyResponse, NotifyRequest, NotifyTemplate, NotifyChannel, NotifyChannelConfigResponse, ShareResponse, ShareRequest, GroupSettingAdvance, Setting } from '@/src/types'
+import type { LoginResponse, UserInfo, ApiResponse, SubResponse, CheckResponse, CheckRequest, HealthResponse, SubRequest, DynamicConfigItem, SubNameAndID, NotifyResponse, NotifyRequest, NotifyTemplate, NotifyChannel, NotifyChannelConfigResponse, ShareResponse, ShareRequest, GroupSettingAdvance, Setting, ChangePasswordRequest, UpdateUserInfoRequest, SessionListResponse } from '@/src/types'
 
 const DEFAULT_REQUEST_HEADERS: Record<string, string> = {}
 
@@ -140,6 +140,23 @@ export const api = {
   async getUserInfo(): Promise<UserInfo> {
     const response = await apiClient.get<ApiResponse<UserInfo>>(API_PATH.auth.user)
     return response.data
+  },
+
+  async changePassword(data: ChangePasswordRequest): Promise<void> {
+    await apiClient.post<ApiResponse<void>>(API_PATH.auth.password, data)
+  },
+
+  async updateUsername(data: UpdateUserInfoRequest): Promise<void> {
+    await apiClient.post<ApiResponse<void>>(API_PATH.auth.name, data)
+  },
+
+  async getSessions(): Promise<SessionListResponse> {
+    const response = await apiClient.get<ApiResponse<SessionListResponse>>(API_PATH.auth.sessions)
+    return response.data
+  },
+
+  async deleteSession(id: number): Promise<void> {
+    await apiClient.delete<ApiResponse<void>>(`${API_PATH.auth.sessions}/${id}`)
   },
   async getSub(id?: number): Promise<SubResponse[]> {
     const url = id ? `${API_PATH.sub}?id=${id}` : API_PATH.sub
