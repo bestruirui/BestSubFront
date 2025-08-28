@@ -15,6 +15,7 @@ interface AuthState {
 interface AuthContextType extends AuthState {
     login: (username: string, password: string) => Promise<void>
     logout: () => Promise<void>
+    updateUser: (user: UserInfo) => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -43,6 +44,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             console.error('Login failed:', error)
             throw error
         }
+    }
+
+    const updateUser = (user: UserInfo) => {
+        setUser(user)
     }
 
     const logout = async () => {
@@ -81,6 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuthenticated,
         login,
         logout,
+        updateUser,
     }
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

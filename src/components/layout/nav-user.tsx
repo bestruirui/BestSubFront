@@ -29,11 +29,13 @@ import {
 } from "@/src/components/ui/sidebar"
 import { useAuth } from "@/src/components/providers"
 import { SettingsDialog } from "@/src/components/features"
+import { ProfileDialog } from "@/src/components/features/profile"
 
 export function NavUser() {
   const { isMobile } = useSidebar()
   const { user, logout } = useAuth()
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
   if (!user) return null
@@ -42,6 +44,13 @@ export function NavUser() {
     setIsDropdownOpen(false)
     setTimeout(() => {
       setIsSettingsOpen(true)
+    }, 100)
+  }
+
+  const handleOpenProfile = () => {
+    setIsDropdownOpen(false)
+    setTimeout(() => {
+      setIsProfileOpen(true)
     }, 100)
   }
 
@@ -91,7 +100,7 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleOpenProfile}>
                 <IconUserCircle />
                 个人资料
               </DropdownMenuItem>
@@ -109,6 +118,7 @@ export function NavUser() {
         </DropdownMenu>
       </SidebarMenuItem>
       <SettingsDialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen} />
+      <ProfileDialog open={isProfileOpen} onOpenChange={setIsProfileOpen} />
     </SidebarMenu>
   )
 }
