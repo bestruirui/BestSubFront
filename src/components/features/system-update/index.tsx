@@ -205,7 +205,7 @@ export function SystemUpdateDialog({ open, onOpenChange }: SystemUpdateDialogPro
                   </div>
                   <CardDescription className="text-sm space-y-1">
                     <div>当前版本: <span className="font-medium">{component.currentVersion}</span></div>
-                    <div>最新版本:
+                    <div>最新版本: <span />
                       <span className={`font-medium ${component.latestVersion !== '加载中...' && component.currentVersion !== component.latestVersion ? 'text-orange-600' : ''}`}>
                         {component.latestVersion}
                       </span>
