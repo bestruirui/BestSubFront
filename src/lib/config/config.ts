@@ -17,6 +17,11 @@ export const API_PATH = {
   system: {
     health: '/api/v1/system/health',
     info: '/api/v1/system/info',
+    version: '/api/v1/system/version',
+  },
+  update: {
+    base: '/api/v1/update',
+    latest: '/api/v1/update',
   },
 }
 

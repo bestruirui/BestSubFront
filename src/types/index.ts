@@ -25,3 +25,6 @@ export * from './common'
 
 // 设置相关类型
 export * from './setting'
+
+// 更新相关类型
+export * from './update'

@@ -1,6 +1,6 @@
 import { API_PATH } from '../config/config'
 import { tokenManager } from './token-manager'
-import type { LoginResponse, UserInfo, ApiResponse, SubResponse, CheckResponse, CheckRequest, HealthResponse, SubRequest, DynamicConfigItem, SubNameAndID, NotifyResponse, NotifyRequest, NotifyTemplate, NotifyChannel, NotifyChannelConfigResponse, ShareResponse, ShareRequest, GroupSettingAdvance, Setting, ChangePasswordRequest, UpdateUserInfoRequest, SessionListResponse } from '@/src/types'
+import type { LoginResponse, UserInfo, ApiResponse, SubResponse, CheckResponse, CheckRequest, HealthResponse, SubRequest, DynamicConfigItem, SubNameAndID, NotifyResponse, NotifyRequest, NotifyTemplate, NotifyChannel, NotifyChannelConfigResponse, ShareResponse, ShareRequest, GroupSettingAdvance, Setting, ChangePasswordRequest, UpdateUserInfoRequest, SessionListResponse, UpdateResponse, UpdateComponent, SystemVersion } from '@/src/types'
 
 const DEFAULT_REQUEST_HEADERS: Record<string, string> = {}
 
@@ -267,5 +267,19 @@ export const api = {
   },
   async updateSettings(data: Setting[]): Promise<void> {
     await apiClient.put<ApiResponse<void>>(API_PATH.setting, data)
+  },
+
+  async getLatestUpdates(): Promise<UpdateResponse> {
+    const response = await apiClient.get<ApiResponse<UpdateResponse>>(API_PATH.update.latest)
+    return response.data
+  },
+
+  async updateComponent(component: UpdateComponent): Promise<void> {
+    await apiClient.post<ApiResponse<void>>(`${API_PATH.update.base}/${component}`, {})
+  },
+
+  async getSystemVersion(): Promise<SystemVersion> {
+    const response = await apiClient.get<ApiResponse<SystemVersion>>(API_PATH.system.version)
+    return response.data
   },
 }
