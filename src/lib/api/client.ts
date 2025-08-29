@@ -1,14 +1,13 @@
 import { API_PATH } from '../config/config'
 import { tokenManager } from './token-manager'
-import type { LoginResponse, UserInfo, ApiResponse, SubResponse, CheckResponse, CheckRequest, HealthResponse, SubRequest, DynamicConfigItem, SubNameAndID, NotifyResponse, NotifyRequest, NotifyTemplate, NotifyChannel, NotifyChannelConfigResponse, ShareResponse, ShareRequest, GroupSettingAdvance, Setting, ChangePasswordRequest, UpdateUserInfoRequest, SessionListResponse, UpdateResponse, UpdateComponent, SystemVersion } from '@/src/types'
+import type { LoginResponse, UserInfo, ApiResponse, SubResponse, CheckResponse, CheckRequest, SubRequest, DynamicConfigItem, SubNameAndID, NotifyResponse, NotifyRequest, NotifyTemplate, NotifyChannel, NotifyChannelConfigResponse, ShareResponse, ShareRequest, GroupSettingAdvance, Setting, ChangePasswordRequest, UpdateUserInfoRequest, SessionListResponse, UpdateResponse, UpdateComponent, SystemVersion } from '@/src/types'
 
 const DEFAULT_REQUEST_HEADERS: Record<string, string> = {}
 
 export class ApiError extends Error {
   constructor(
-    message: string,
-    public status?: number,
-    public response?: Response
+    public code: number,
+    override message: string
   ) {
     super(message)
     this.name = 'ApiError'
@@ -52,33 +51,14 @@ class ApiClient {
       const response = await fetch(url, config)
 
       if (!response.ok) {
-        let errorMessage = `HTTP ${response.status}: ${response.statusText}`
-
-        try {
-          const errorData = await response.json()
-          if (errorData.message) {
-            errorMessage = errorData.message
-          }
-        } catch {
-        }
-
-        throw new ApiError(errorMessage, response.status, response)
+        const data = await response.json() as ApiResponse
+        throw new ApiError(data.code, data.message)
       }
 
-      const contentType = response.headers.get('content-type')
-      if (contentType && contentType.includes('application/json')) {
-        return await response.json()
-      }
-
-      return response.text() as unknown as T
+      return await response.json() as T
     } catch (error) {
-      if (error instanceof ApiError) {
-        throw error
-      }
-
-      throw new ApiError(
-        error instanceof Error ? error.message : 'Network error occurred'
-      )
+      if (error instanceof ApiError) throw error
+      throw new ApiError(-1, error instanceof Error ? error.message : '与后端通信失败')
     }
   }
 
@@ -170,10 +150,6 @@ export const api = {
   },
   async getCheckTypes(): Promise<Record<string, DynamicConfigItem[]>> {
     const response = await apiClient.get<ApiResponse<Record<string, DynamicConfigItem[]>>>(`${API_PATH.check}/type`)
-    return response.data
-  },
-  async getSystemHealth(): Promise<HealthResponse> {
-    const response = await apiClient.get<ApiResponse<HealthResponse>>(API_PATH.system.health, false) // 系统健康检查不需要认证
     return response.data
   },
   async refreshSubscription(id: number): Promise<void> {

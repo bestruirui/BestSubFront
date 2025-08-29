@@ -27,7 +27,7 @@ export function LoginForm({
 
     const getErrorMessage = (error: unknown): string => {
         if (error instanceof ApiError) {
-            switch (error.status) {
+            switch (error.code) {
                 case 401:
                     return "用户名或密码错误"
                 case 429:

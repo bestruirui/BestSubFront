@@ -123,8 +123,7 @@ export function SystemUpdateDialog({ open, onOpenChange }: SystemUpdateDialogPro
         }
       }))
     } catch (error) {
-      toast.error("获取更新信息失败")
-      console.error('Failed to fetch update info:', error)
+      toast.error("获取更新信息失败" + (error as Error).message)
     } finally {
       setIsLoading(false)
     }
