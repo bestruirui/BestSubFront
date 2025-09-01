@@ -27,12 +27,6 @@ export const SUBSCRIPTION_TARGETS = [
     { value: 'auto', label: '自动判断客户端' },
 ] as const
 
-export const ALIVE_STATUS_OPTIONS = [
-    { value: 0, label: '不限制' },
-    { value: 1, label: '仅存活' },
-    { value: 2, label: '仅失效' },
-] as const
-
 export const FORM_VALIDATION = {
     NAME_REQUIRED: '请输入分享名称',
     POSITIVE_NUMBER: '请输入正数',
