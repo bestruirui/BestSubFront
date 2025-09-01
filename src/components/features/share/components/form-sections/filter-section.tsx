@@ -1,14 +1,9 @@
 import { Controller, Control } from 'react-hook-form'
 import { Input } from '@/src/components/ui/input'
 import { Label } from '@/src/components/ui/label'
-import { safeParseInt, safeParseFloat, validateCountryCodes } from '../../utils'
-import type { ShareRequest } from '@/src/types'
+import { safeParseInt, safeParseFloat } from '../../utils'
 
-interface FilterSectionProps {
-    control: Control<ShareRequest>
-}
-
-export function FilterSection({ control }: FilterSectionProps) {
+export function FilterSection({ control }: { control: Control<Record<string, unknown> | any> }) {
     return (
         <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -101,26 +96,6 @@ export function FilterSection({ control }: FilterSectionProps) {
                 </div>
             </div>
 
-            <div>
-                <Label htmlFor="country" className="mb-2 block">
-                    国家代码
-                </Label>
-                <Controller
-                    name="gen.filter.country"
-                    control={control}
-                    render={({ field }) => (
-                        <Input
-                            id="country"
-                            value={Array.isArray(field.value) ? field.value.join(',') : ''}
-                            onChange={(e) => {
-                                const codes = validateCountryCodes(e.target.value)
-                                field.onChange(codes)
-                            }}
-                            placeholder="SG,HK,TW"
-                        />
-                    )}
-                />
-            </div>
         </div>
     )
 }

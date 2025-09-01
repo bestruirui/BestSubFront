@@ -6,7 +6,8 @@ import {
     BasicInfoSection,
     ConfigSection,
     FilterSection,
-    AliveStatusSection
+    AliveStatusSection,
+    CountrySection
 } from "./form-sections"
 import { SubscriptionSection } from "@/src/components/shared/subscription-section"
 import type { ShareRequest } from "@/src/types"
@@ -60,6 +61,8 @@ export function ShareForm({
 
                     {/* 存活状态选择 */}
                     <AliveStatusSection control={control} fieldName="gen.filter.alive_status" />
+
+                    <CountrySection control={control} fieldName="gen.filter.country" />
 
                     {/* 操作按钮 */}
                     <div className="flex gap-2 pt-4">
