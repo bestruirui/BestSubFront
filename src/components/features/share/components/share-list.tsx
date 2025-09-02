@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useEffect } from 'react'
 import { Card, CardContent } from "@/src/components/ui/card"
 import { Table, TableBody, TableCell, TableRow } from "@/src/components/ui/table"
 import { InlineLoading } from "@/src/components/ui/loading"
@@ -9,6 +9,7 @@ import { useShareStore } from "@/src/store/shareStore"
 import { useShareOperations } from "../hooks"
 import { formatAccessCount, formatExpiresTime } from "../utils"
 import { UI_TEXT } from "../constants"
+import { useOverflowDetection } from "@/src/lib/hooks/useOverflowDetection"
 import type { ShareResponse } from "@/src/types/share"
 
 interface ShareListProps {
@@ -20,8 +21,8 @@ export function ShareList({ onEdit, openCopyDialog }: ShareListProps) {
     const shareStore = useShareStore()
     const { shares, isLoading } = shareStore
     const { handleDelete, handleCopy } = useShareOperations()
+    const { containerRef, contentRef, isOverflowing, checkOverflow } = useOverflowDetection<HTMLTableElement>()
 
-    // 按 ID 排序的分享列表
     const sortedShares = useMemo(() =>
         [...shares].sort((a, b) => a.id - b.id),
         [shares]
@@ -34,6 +35,12 @@ export function ShareList({ onEdit, openCopyDialog }: ShareListProps) {
     const onDeleteClick = (id: number, name: string) => {
         handleDelete(id, name)
     }
+
+    useEffect(() => {
+        if (!isLoading) {
+            checkOverflow()
+        }
+    }, [isLoading, checkOverflow])
 
     if (isLoading) {
         return (
@@ -60,68 +67,70 @@ export function ShareList({ onEdit, openCopyDialog }: ShareListProps) {
     return (
         <Card>
             <CardContent>
-                <Table className="overflow-x-hidden">
-                    <TableBody>
-                        {sortedShares.map((share) => (
-                            <TableRow key={share.id}>
-                                <TableCell className="space-y-1">
-                                    <div className="font-medium">
-                                        {share.name}
-                                    </div>
-                                </TableCell>
+                <div className="overflow-x-auto" ref={containerRef}>
+                    <Table ref={contentRef}>
+                        <TableBody>
+                            {sortedShares.map((share) => (
+                                <TableRow key={share.id}>
+                                    <TableCell className="space-y-1">
+                                        <div className="font-medium">
+                                            {share.name}
+                                        </div>
+                                    </TableCell>
 
-                                <TableCell>
-                                    <StatusBadge status={share.enable ? 'enabled' : 'disabled'} />
-                                </TableCell>
+                                    <TableCell>
+                                        <StatusBadge status={share.enable ? 'enabled' : 'disabled'} />
+                                    </TableCell>
 
-                                <TableCell>
-                                    <div>
-                                        访问: <span className="text-muted-foreground">
-                                            {formatAccessCount(share.access_count, share.max_access_count)}
-                                        </span>
-                                    </div>
-                                </TableCell>
+                                    <TableCell>
+                                        <div>
+                                            访问: <span className="text-muted-foreground">
+                                                {formatAccessCount(share.access_count, share.max_access_count)}
+                                            </span>
+                                        </div>
+                                    </TableCell>
 
-                                <TableCell>
-                                    <div>
-                                        过期日期: <span className="text-muted-foreground">
-                                            {formatExpiresTime(share.expires)}
-                                        </span>
-                                    </div>
-                                </TableCell>
+                                    <TableCell>
+                                        <div>
+                                            过期日期: <span className="text-muted-foreground">
+                                                {formatExpiresTime(share.expires)}
+                                            </span>
+                                        </div>
+                                    </TableCell>
 
-                                <TableCell className="text-right">
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() => onCopyClick(share.token)}
-                                        title={UI_TEXT.COPY}
-                                    >
-                                        <Copy className="h-4 w-4" />
-                                    </Button>
+                                    <TableCell className={`text-right sticky right-0 bg-background ${isOverflowing ? 'shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.1)]' : ''}`}>
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => onCopyClick(share.token)}
+                                            title={UI_TEXT.COPY}
+                                        >
+                                            <Copy className="h-4 w-4" />
+                                        </Button>
 
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => onEdit(share)}
-                                        title="编辑"
-                                    >
-                                        <Edit className="h-4 w-4" />
-                                    </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => onEdit(share)}
+                                            title="编辑"
+                                        >
+                                            <Edit className="h-4 w-4" />
+                                        </Button>
 
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() => onDeleteClick(share.id, share.name)}
-                                        title={UI_TEXT.DELETE}
-                                    >
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => onDeleteClick(share.id, share.name)}
+                                            title={UI_TEXT.DELETE}
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
             </CardContent>
         </Card>
     )

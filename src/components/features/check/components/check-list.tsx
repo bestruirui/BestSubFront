@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import { Button } from "@/src/components/ui/button"
 import { Badge } from "@/src/components/ui/badge"
 import { Card, CardContent } from "@/src/components/ui/card"
@@ -7,6 +8,7 @@ import { Play, Edit, Trash2 } from "lucide-react"
 import { UI_TEXT } from "../constants"
 import { formatLastRunTime, formatDuration, formatBooleanText } from "@/src/utils"
 import StatusBadge from "@/src/components/shared/status-badge"
+import { useOverflowDetection } from "@/src/lib/hooks/useOverflowDetection"
 import type { CheckResponse } from "@/src/types/check"
 import { api } from "@/src/lib/api/client"
 import { useAlert } from '@/src/components/providers'
@@ -26,6 +28,7 @@ export function CheckList({
 }: CheckListProps) {
     const { confirm } = useAlert()
     const checkStore = useCheckStore()
+    const { containerRef, contentRef, isOverflowing, checkOverflow } = useOverflowDetection<HTMLTableElement>()
 
     const onDelete = async (id: number, name: string) => {
         const confirmed = await confirm({
@@ -47,6 +50,11 @@ export function CheckList({
         }
     }
 
+    useEffect(() => {
+        if (!isLoading) {
+            checkOverflow()
+        }
+    }, [isLoading, checkOverflow])
 
     if (isLoading) {
         return (
@@ -72,70 +80,72 @@ export function CheckList({
 
     return (
         <Card>
-            <CardContent >
-                <Table >
-                    <TableBody>
-                        {checks.sort((a, b) => a.id - b.id).map((check) => (
-                            <TableRow key={check.id}>
-                                <TableCell className="space-y-1">
-                                    <div className="font-medium">
-                                        {check.name}
-                                    </div>
-                                    <div className="text-sm text-muted-foreground">{check.task?.cron_expr || 'N/A'}</div>
-                                </TableCell>
+            <CardContent>
+                <div className="overflow-x-auto" ref={containerRef}>
+                    <Table ref={contentRef}>
+                        <TableBody>
+                            {checks.sort((a, b) => a.id - b.id).map((check) => (
+                                <TableRow key={check.id}>
+                                    <TableCell className="space-y-1">
+                                        <div className="font-medium">
+                                            {check.name}
+                                        </div>
+                                        <div className="text-sm text-muted-foreground">{check.task?.cron_expr || 'N/A'}</div>
+                                    </TableCell>
 
-                                <TableCell className="space-y-2 flex flex-col">
-                                    <StatusBadge status={check.enable ? check.status : 'disabled'} />
-                                    <Badge variant="outline" className="text-xs w-fit">
-                                        {check.task.type}
-                                    </Badge>
-                                </TableCell>
+                                    <TableCell className="space-y-2 flex flex-col">
+                                        <StatusBadge status={check.enable ? check.status : 'disabled'} />
+                                        <Badge variant="outline" className="text-xs w-fit">
+                                            {check.task.type}
+                                        </Badge>
+                                    </TableCell>
 
-                                <TableCell className="text-xs space-y-1">
-                                    <div>超时时间: <span className="text-muted-foreground">{check.task?.timeout || 0}分钟</span> </div>
-                                    <div>通知: <span className="text-muted-foreground">{formatBooleanText(check.task?.notify ?? false)}</span></div>
-                                    <div>日志: <span className="text-muted-foreground">{formatBooleanText(check.task?.log_write_file ?? false)}</span></div>
-                                </TableCell>
+                                    <TableCell className="text-xs space-y-1">
+                                        <div>超时时间: <span className="text-muted-foreground">{check.task?.timeout || 0}分钟</span> </div>
+                                        <div>通知: <span className="text-muted-foreground">{formatBooleanText(check.task?.notify ?? false)}</span></div>
+                                        <div>日志: <span className="text-muted-foreground">{formatBooleanText(check.task?.log_write_file ?? false)}</span></div>
+                                    </TableCell>
 
-                                <TableCell className="text-xs space-y-1">
-                                    <div>最后运行: <span className="text-muted-foreground">{formatLastRunTime(check.result?.last_run)}</span></div>
-                                    <div>执行时长: <span className="text-muted-foreground">{formatDuration(check.result?.duration)}</span></div>
-                                    <div>状态消息: <span className="text-muted-foreground">{check.result?.msg || '无'}</span></div>
-                                </TableCell>
+                                    <TableCell className="text-xs space-y-1">
+                                        <div>最后运行: <span className="text-muted-foreground">{formatLastRunTime(check.result?.last_run)}</span></div>
+                                        <div>执行时长: <span className="text-muted-foreground">{formatDuration(check.result?.duration)}</span></div>
+                                        <div>状态消息: <span className="text-muted-foreground">{check.result?.msg || '无'}</span></div>
+                                    </TableCell>
 
-                                <TableCell className="text-right space-x-2">
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() => {
-                                            api.runCheck(check.id)
-                                            toast.success(UI_TEXT.RUN_SUCCESS)
-                                        }}
-                                        disabled={!check.enable || check.status === 'running'}
-                                    >
-                                        <Play className="h-4 w-4" />
-                                    </Button>
+                                    <TableCell className={`text-right space-x-2 sticky right-0 bg-background ${isOverflowing ? 'shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.1)]' : ''}`}>
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => {
+                                                api.runCheck(check.id)
+                                                toast.success(UI_TEXT.RUN_SUCCESS)
+                                            }}
+                                            disabled={!check.enable || check.status === 'running'}
+                                        >
+                                            <Play className="h-4 w-4" />
+                                        </Button>
 
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() => onEdit(check)}
-                                    >
-                                        <Edit className="h-4 w-4" />
-                                    </Button>
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => onEdit(check)}
+                                        >
+                                            <Edit className="h-4 w-4" />
+                                        </Button>
 
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() => onDelete(check.id, check.name)}
-                                    >
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => onDelete(check.id, check.name)}
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
             </CardContent>
         </Card>
     )
