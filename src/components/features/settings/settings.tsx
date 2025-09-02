@@ -7,7 +7,7 @@ import {
   Dialog,
   DialogContent,
 } from "@/src/components/ui/dialog"
-import { useSettingStore } from "@/src/store/settingStore"
+import { useSettings, useUpdateSettings } from "@/src/lib/queries/setting-queries"
 import { getNavData, renderSettingsGroup, renderError } from "./setting-renderers"
 import { SettingsLayout } from "./SettingsLayout"
 import { SettingsActions } from "./SettingsActions"
@@ -22,13 +22,8 @@ interface SettingsDialogProps {
 
 export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
   const [activeTab, setActiveTab] = useState("")
-  const {
-    settings,
-    isLoading,
-    error,
-    loadSettings,
-    updateSettings
-  } = useSettingStore()
+  const { data: settings = [], isLoading, error } = useSettings()
+  const updateSettingsMutation = useUpdateSettings()
 
   const form = useForm<FormValues>({
     mode: 'onChange',
@@ -43,12 +38,6 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
       setActiveTab(nav[0].id)
     }
   }, [nav])
-
-  useEffect(() => {
-    if (open) {
-      loadSettings()
-    }
-  }, [open, loadSettings])
 
   useEffect(() => {
     if (!isLoading && settings.length > 0) {
@@ -101,7 +90,7 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
 
     if (changes.length > 0) {
       try {
-        await updateSettings(changes)
+        await updateSettingsMutation.mutateAsync(changes)
         onOpenChange(false)
       } catch (err) {
         console.error('Failed to save settings:', err)
@@ -109,10 +98,10 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
     } else {
       onOpenChange(false)
     }
-  }, [hasChanges, dirtyFields, form.getValues, updateSettings, onOpenChange])
+  }, [hasChanges, dirtyFields, form.getValues, updateSettingsMutation, onOpenChange])
 
   const renderContent = useMemo(() => {
-    if (error) return renderError(error)
+    if (error) return renderError(error.message)
     if (currentGroup && currentGroup.data) {
       return renderSettingsGroup(currentGroup, form.control)
     }

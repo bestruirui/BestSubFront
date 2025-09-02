@@ -12,22 +12,17 @@ import { useOverflowDetection } from "@/src/lib/hooks/useOverflowDetection"
 import type { CheckResponse } from "@/src/types/check"
 import { api } from "@/src/lib/api/client"
 import { useAlert } from '@/src/components/providers'
-import { useCheckStore } from "@/src/store/checkStore"
+import { useChecks, useDeleteCheck } from "@/src/lib/queries/check-queries"
 import { toast } from "sonner"
 
 interface CheckListProps {
-    checks: CheckResponse[]
-    isLoading: boolean
     onEdit: (check: CheckResponse) => void
 }
 
-export function CheckList({
-    checks,
-    isLoading,
-    onEdit,
-}: CheckListProps) {
+export function CheckList({ onEdit }: CheckListProps) {
     const { confirm } = useAlert()
-    const checkStore = useCheckStore()
+    const { data: checks = [], isLoading, error } = useChecks()
+    const deleteCheckMutation = useDeleteCheck()
     const { containerRef, contentRef, isOverflowing, checkOverflow } = useOverflowDetection<HTMLTableElement>()
 
     const onDelete = async (id: number, name: string) => {
@@ -41,7 +36,7 @@ export function CheckList({
 
         if (confirmed) {
             try {
-                await checkStore.deleteCheck(id)
+                await deleteCheckMutation.mutateAsync(id)
                 toast.success(UI_TEXT.DELETE_SUCCESS)
             } catch (error) {
                 toast.error(UI_TEXT.DELETE_FAILED)
@@ -60,7 +55,19 @@ export function CheckList({
         return (
             <Card>
                 <CardContent>
-                    <InlineLoading message={UI_TEXT.LOADING + "检测任务..."} />
+                    <InlineLoading message={UI_TEXT.LOADING + '检测任务...'} />
+                </CardContent>
+            </Card>
+        )
+    }
+
+    if (error) {
+        return (
+            <Card>
+                <CardContent>
+                    <div className="text-center py-8 text-destructive">
+                        加载失败: {error.message}
+                    </div>
                 </CardContent>
             </Card>
         )
@@ -71,7 +78,7 @@ export function CheckList({
             <Card>
                 <CardContent>
                     <div className="text-center py-8 text-muted-foreground">
-                        {UI_TEXT.NO_DATA}，点击上方按钮添加第一个任务
+                        {UI_TEXT.NO_DATA}，点击上方按钮创建第一个检测任务
                     </div>
                 </CardContent>
             </Card>

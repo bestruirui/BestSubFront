@@ -1,8 +1,8 @@
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Controller, Control } from 'react-hook-form'
 import { Label } from '@/src/components/ui/label'
 import { Badge } from '@/src/components/ui/badge'
-import { useSubStore } from '@/src/store/subStore'
+import { useSubs } from '@/src/lib/queries/sub-queries'
 
 interface SubscriptionSectionProps {
     control: Control<Record<string, unknown> | any>
@@ -10,18 +10,12 @@ interface SubscriptionSectionProps {
 }
 
 export function SubscriptionSection({ control, fieldName }: SubscriptionSectionProps) {
-    const subStore = useSubStore()
+    const { data: subs = [], isLoading, error } = useSubs()
 
     const subList = useMemo(() =>
-        subStore.subs.map(sub => ({ id: sub.id, name: sub.name })),
-        [subStore.subs]
+        subs.map(sub => ({ id: sub.id, name: sub.name })),
+        [subs]
     )
-
-    const isLoading = subStore.isLoading
-
-    useEffect(() => {
-        subStore.loadSubs()
-    }, [subStore])
 
     if (isLoading) {
         return (
@@ -29,6 +23,17 @@ export function SubscriptionSection({ control, fieldName }: SubscriptionSectionP
                 <Label className="mb-2 block">选择订阅</Label>
                 <div className="text-center py-4 text-muted-foreground">
                     <p className="text-sm">加载订阅中...</p>
+                </div>
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className="w-full">
+                <Label className="mb-2 block">选择订阅</Label>
+                <div className="text-center py-4 text-destructive">
+                    <p className="text-sm">加载失败: {error.message}</p>
                 </div>
             </div>
         )

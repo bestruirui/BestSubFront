@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { useEffect, useMemo } from 'react'
 import { toast } from 'sonner'
-import { useCheckStore } from '@/src/store/checkStore'
+import { useCheckTypes, useCreateCheck, useUpdateCheck } from '@/src/lib/queries/check-queries'
 import {
     createDefaultCheckData,
     validateCheckForm
@@ -22,7 +22,9 @@ export function useCheckForm({
     onSuccess,
     isOpen = true
 }: UseCheckFormProps = {}) {
-    const checkStore = useCheckStore()
+    const { data: checkTypeConfigs = {}, isLoading: isLoadingConfigs } = useCheckTypes()
+    const createCheckMutation = useCreateCheck()
+    const updateCheckMutation = useUpdateCheck()
 
     const defaultData = useMemo(() => createDefaultCheckData(), [])
 
@@ -51,10 +53,10 @@ export function useCheckForm({
             }
 
             if (editingCheckId) {
-                await checkStore.updateCheck(editingCheckId, submitData)
+                await updateCheckMutation.mutateAsync({ id: editingCheckId, data: submitData })
                 toast.success(UI_TEXT.UPDATE_SUCCESS)
             } else {
-                await checkStore.createCheck(submitData)
+                await createCheckMutation.mutateAsync(submitData)
                 toast.success(UI_TEXT.CREATE_SUCCESS)
             }
 
@@ -66,14 +68,12 @@ export function useCheckForm({
         }
     }
 
-
-
     return {
         form,
         onSubmit: handleSubmit(onSubmit),
         watch,
         isEditing: !!editingCheckId,
-        checkTypeConfigs: checkStore.checkTypes,
-        isLoadingConfigs: checkStore.isLoading,
+        checkTypeConfigs,
+        isLoadingConfigs,
     }
 }

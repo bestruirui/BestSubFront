@@ -1,26 +1,18 @@
-import { useEffect } from 'react'
 import { Controller, Control } from 'react-hook-form'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/src/components/ui/select'
 import { Input } from '@/src/components/ui/input'
 import { Label } from '@/src/components/ui/label'
 import { Switch } from '@/src/components/ui/switch'
-import { useCheckStore } from '@/src/store/checkStore'
+import { useCheckTypes } from '@/src/lib/queries/check-queries'
 import { UI_TEXT } from '../../constants'
 import type { CheckRequest } from '@/src/types/check'
 import type { DynamicConfigItem } from '@/src/types/common'
 
 
 export function ExtraConfigSection({ control }: { control: Control<CheckRequest> }) {
-    const checkStore = useCheckStore()
+    const { data: checkTypeConfigs = {}, isLoading } = useCheckTypes()
 
-    const checkTypes = Object.keys(checkStore.checkTypes)
-    const isLoading = checkStore.isLoading
-
-    useEffect(() => {
-        if (checkTypes.length === 0 && !isLoading) {
-            checkStore.loadCheckTypes()
-        }
-    }, [checkStore, checkTypes.length, isLoading])
+    const checkTypes = Object.keys(checkTypeConfigs)
 
     const isConfigFieldEmpty = (configType: string, value: unknown): boolean => {
         if (configType === 'boolean') return false
@@ -116,7 +108,6 @@ export function ExtraConfigSection({ control }: { control: Control<CheckRequest>
 
     return (
         <div className="space-y-4">
-            {/* 检测类型选择 */}
             <Controller
                 name="task.type"
                 control={control}
@@ -144,13 +135,12 @@ export function ExtraConfigSection({ control }: { control: Control<CheckRequest>
                 )}
             />
 
-            {/* 动态配置 */}
             <Controller
                 name="task.type"
                 control={control}
                 render={({ field }) => {
                     const selectedType = field.value
-                    const configs = selectedType ? checkStore.checkTypes[selectedType] || [] : []
+                    const configs = selectedType ? checkTypeConfigs[selectedType] || [] : []
 
                     if (!selectedType) {
                         return (

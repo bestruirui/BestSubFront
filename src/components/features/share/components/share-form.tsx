@@ -27,7 +27,7 @@ export function ShareForm({
     onClose,
     editingShareId,
 }: ShareFormProps) {
-    const { form, onSubmit, watch, isEditing } = useShareForm({
+    const { form, onSubmit, watch, isEditing, isLoading } = useShareForm({
         initialData,
         editingShareId,
         onSuccess: onClose,
@@ -66,13 +66,18 @@ export function ShareForm({
 
                     {/* 操作按钮 */}
                     <div className="flex gap-2 pt-4">
-                        <Button type="submit" className="flex-1">
-                            {isEditing ? UI_TEXT.UPDATE : UI_TEXT.CREATE}
+                        <Button type="submit" className="flex-1" disabled={isLoading}>
+                            {isLoading ? (
+                                isEditing ? '更新中...' : '创建中...'
+                            ) : (
+                                isEditing ? UI_TEXT.UPDATE : UI_TEXT.CREATE
+                            )}
                         </Button>
                         <Button
                             type="button"
                             variant="outline"
                             onClick={onClose}
+                            disabled={isLoading}
                         >
                             {UI_TEXT.CANCEL}
                         </Button>

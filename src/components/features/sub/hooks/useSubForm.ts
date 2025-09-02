@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { useEffect, useMemo } from 'react'
 import { toast } from 'sonner'
-import { useSubStore } from '@/src/store/subStore'
+import { useCreateSub, useUpdateSub } from '@/src/lib/queries/sub-queries'
 import type { SubRequest } from '@/src/types/sub'
 
 interface UseSubFormProps {
@@ -17,7 +17,8 @@ export function useSubForm({
   onSuccess,
   isOpen = true
 }: UseSubFormProps = {}) {
-  const subStore = useSubStore()
+  const createSubMutation = useCreateSub()
+  const updateSubMutation = useUpdateSub()
 
   const defaultData = useMemo((): SubRequest => ({
     name: '',
@@ -45,10 +46,10 @@ export function useSubForm({
   const onSubmit = async (data: SubRequest) => {
     try {
       if (editingSubId) {
-        await subStore.updateSub(editingSubId, data)
+        await updateSubMutation.mutateAsync({ id: editingSubId, data })
         toast.success('订阅更新成功')
       } else {
-        await subStore.createSub(data)
+        await createSubMutation.mutateAsync(data)
         toast.success('订阅创建成功')
       }
 

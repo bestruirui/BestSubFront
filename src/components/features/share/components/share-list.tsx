@@ -5,7 +5,7 @@ import { InlineLoading } from "@/src/components/ui/loading"
 import StatusBadge from "@/src/components/shared/status-badge"
 import { Button } from "@/src/components/ui/button"
 import { Edit, Trash2, Copy } from "lucide-react"
-import { useShareStore } from "@/src/store/shareStore"
+import { useShares } from "@/src/lib/queries/share-queries"
 import { useShareOperations } from "../hooks"
 import { formatAccessCount, formatExpiresTime } from "../utils"
 import { UI_TEXT } from "../constants"
@@ -18,8 +18,7 @@ interface ShareListProps {
 }
 
 export function ShareList({ onEdit, openCopyDialog }: ShareListProps) {
-    const shareStore = useShareStore()
-    const { shares, isLoading } = shareStore
+    const { data: shares = [], isLoading, error } = useShares()
     const { handleDelete, handleCopy } = useShareOperations()
     const { containerRef, contentRef, isOverflowing, checkOverflow } = useOverflowDetection<HTMLTableElement>()
 
@@ -47,6 +46,18 @@ export function ShareList({ onEdit, openCopyDialog }: ShareListProps) {
             <Card>
                 <CardContent>
                     <InlineLoading message={UI_TEXT.LOADING + '分享列表...'} />
+                </CardContent>
+            </Card>
+        )
+    }
+
+    if (error) {
+        return (
+            <Card>
+                <CardContent>
+                    <div className="text-center py-8 text-destructive">
+                        加载失败: {error.message}
+                    </div>
                 </CardContent>
             </Card>
         )

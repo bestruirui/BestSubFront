@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { useEffect, useMemo } from 'react'
 import { toast } from 'sonner'
-import { useShareStore } from '@/src/store/shareStore'
+import { useCreateShare, useUpdateShare } from '@/src/lib/queries/share-queries'
 import { generateToken, createDefaultShareData } from '../utils'
 import { UI_TEXT } from '../constants'
 import type { ShareRequest } from '@/src/types'
@@ -19,7 +19,8 @@ export function useShareForm({
     onSuccess,
     isOpen = true
 }: UseShareFormProps = {}) {
-    const shareStore = useShareStore()
+    const createShareMutation = useCreateShare()
+    const updateShareMutation = useUpdateShare()
 
     const defaultData = useMemo(() => createDefaultShareData(), [])
 
@@ -44,10 +45,10 @@ export function useShareForm({
             }
 
             if (editingShareId) {
-                await shareStore.updateShare(editingShareId, submitData)
+                await updateShareMutation.mutateAsync({ id: editingShareId, data: submitData })
                 toast.success(UI_TEXT.UPDATE_SUCCESS)
             } else {
-                await shareStore.createShare(submitData)
+                await createShareMutation.mutateAsync(submitData)
                 toast.success(UI_TEXT.CREATE_SUCCESS)
             }
 
@@ -59,10 +60,15 @@ export function useShareForm({
         }
     }
 
+    const isLoading = editingShareId
+        ? updateShareMutation.isPending
+        : createShareMutation.isPending
+
     return {
         form,
         onSubmit: handleSubmit(onSubmit),
         watch,
         isEditing: !!editingShareId,
+        isLoading,
     }
 }

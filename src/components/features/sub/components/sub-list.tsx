@@ -7,7 +7,7 @@ import { RefreshCw, Edit, Trash2 } from "lucide-react"
 import { formatLastRunTime } from "@/src/utils"
 import { StatusBadge } from "@/src/components/shared/status-badge"
 import { formatSpeed } from "../utils"
-import { useSubStore } from "@/src/store/subStore"
+import { useSubs } from "@/src/lib/queries/sub-queries"
 import { useSubOperations } from "../hooks/useSubOperations"
 import { useOverflowDetection } from "@/src/lib/hooks/useOverflowDetection"
 import type { SubResponse } from "@/src/types/sub"
@@ -21,13 +21,9 @@ export function SubList({
     onEdit,
     onShowDetail,
 }: SubscriptionListProps) {
-    const { subs, isLoading, loadSubs } = useSubStore()
+    const { data: subs = [], isLoading, error } = useSubs()
     const { refreshingId, deletingId, handleDelete, handleRefresh } = useSubOperations()
     const { containerRef, contentRef, isOverflowing, checkOverflow } = useOverflowDetection<HTMLTableElement>()
-
-    useEffect(() => {
-        loadSubs()
-    }, [loadSubs])
 
     useEffect(() => {
         if (!isLoading) {
@@ -45,18 +41,29 @@ export function SubList({
         )
     }
 
-    if (subs.length === 0) {
+    if (error) {
         return (
             <Card>
                 <CardContent>
-                    <div className="text-center py-8 text-muted-foreground">
-                        暂无订阅，点击上方按钮添加第一个订阅
+                    <div className="text-center py-8 text-destructive">
+                        加载失败: {error.message}
                     </div>
                 </CardContent>
             </Card>
         )
     }
 
+    if (subs.length === 0) {
+        return (
+            <Card>
+                <CardContent>
+                    <div className="text-center py-8 text-muted-foreground">
+                        暂无订阅数据，点击上方按钮创建第一个订阅
+                    </div>
+                </CardContent>
+            </Card>
+        )
+    }
 
     return (
         <Card>
@@ -66,8 +73,9 @@ export function SubList({
                         <TableBody>
                             {subs.sort((a, b) => a.id - b.id).map((sub) => (
                                 <TableRow key={sub.id}>
-                                    <TableCell className="space-y-1">
-                                        <div className="font-medium" onClick={() => onShowDetail(sub)}>
+                                    <TableCell>
+                                        <div className="font-medium cursor-pointer hover:text-blue-600"
+                                            onClick={() => onShowDetail(sub)}>
                                             {sub.name}
                                         </div>
                                         <div className="text-sm text-muted-foreground">{sub?.cron_expr || 'N/A'}</div>

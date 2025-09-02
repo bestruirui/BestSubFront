@@ -1,22 +1,16 @@
-import { useEffect, useState, useCallback } from "react"
+import { useState, useCallback } from "react"
 import { Button } from "@/src/components/ui/button"
 import { Plus } from "lucide-react"
-import { useCheckStore } from "@/src/store/checkStore"
 import { CheckForm } from "./check-form"
 import { CheckList } from "./check-list"
 import { UI_TEXT } from "../constants"
 import { convertCheckResponseToRequest } from "../utils"
 import type { CheckResponse, CheckRequest } from "@/src/types/check"
-export function CheckPage() {
-    const checkStore = useCheckStore()
 
+export function CheckPage() {
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [editingCheck, setEditingCheck] = useState<CheckResponse | null>(null)
     const [formData, setFormData] = useState<CheckRequest | undefined>(undefined)
-
-    useEffect(() => {
-        checkStore.loadChecks()
-    }, [checkStore])
 
     const openEditDialog = useCallback((check: CheckResponse) => {
         setEditingCheck(check)
@@ -37,7 +31,6 @@ export function CheckPage() {
             setFormData(undefined)
         }, 200)
     }, [])
-
 
     return (
         <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
@@ -61,11 +54,7 @@ export function CheckPage() {
             />
 
             <div className="px-4 lg:px-6">
-                <CheckList
-                    checks={checkStore.checks}
-                    isLoading={checkStore.isLoading}
-                    onEdit={openEditDialog}
-                />
+                <CheckList onEdit={openEditDialog} />
             </div>
         </div>
     )

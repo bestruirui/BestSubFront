@@ -1,7 +1,6 @@
-import { useEffect, useState, useCallback } from "react"
+import { useState, useCallback } from "react"
 import { Button } from "@/src/components/ui/button"
 import { Plus } from "lucide-react"
-import { useShareStore } from "@/src/store/shareStore"
 import { ShareForm } from "./share-form"
 import { ShareList } from "./share-list"
 import { ShareCopyDialog } from "./share-copy"
@@ -9,8 +8,6 @@ import { UI_TEXT } from "../constants"
 import type { ShareResponse, ShareRequest } from "@/src/types/share"
 
 export function SharePage() {
-    const shareStore = useShareStore()
-
     // 表单状态
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [editingShare, setEditingShare] = useState<ShareResponse | null>(null)
@@ -19,11 +16,6 @@ export function SharePage() {
     // 复制对话框状态
     const [isCopyDialogOpen, setIsCopyDialogOpen] = useState(false)
     const [copyUrl, setCopyUrl] = useState('')
-
-    // 加载分享列表
-    useEffect(() => {
-        shareStore.loadShares()
-    }, [shareStore])
 
     // 打开编辑对话框
     const openEditDialog = useCallback((share: ShareResponse) => {
@@ -43,12 +35,12 @@ export function SharePage() {
 
     // 关闭表单对话框
     const closeFormDialog = useCallback(() => {
-      setIsDialogOpen(false)
-      // 延迟清理状态，等待对话框关闭动画完成
-      setTimeout(() => {
-        setEditingShare(null)
-        setFormData(undefined)
-      }, 200) // 对话框关闭动画通常是 150-200ms
+        setIsDialogOpen(false)
+        // 延迟清理状态，等待对话框关闭动画完成
+        setTimeout(() => {
+            setEditingShare(null)
+            setFormData(undefined)
+        }, 200) // 对话框关闭动画通常是 150-200ms
     }, [])
 
     // 打开复制对话框

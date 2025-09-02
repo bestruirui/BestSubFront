@@ -1,12 +1,12 @@
 import { toast } from 'sonner'
 import { useAlert } from '@/src/components/providers'
-import { useShareStore } from '@/src/store/shareStore'
+import { useDeleteShare } from '@/src/lib/queries/share-queries'
 import { copyToClipboard, buildShareUrl } from '../utils'
 import { UI_TEXT } from '../constants'
 
 export function useShareOperations() {
     const { confirm } = useAlert()
-    const shareStore = useShareStore()
+    const deleteShareMutation = useDeleteShare()
 
     const handleDelete = async (id: number, name: string) => {
         const confirmed = await confirm({
@@ -19,7 +19,7 @@ export function useShareOperations() {
 
         if (confirmed) {
             try {
-                await shareStore.deleteShare(id)
+                await deleteShareMutation.mutateAsync(id)
                 toast.success(UI_TEXT.DELETE_SUCCESS)
             } catch (error) {
                 toast.error(UI_TEXT.DELETE_FAILED)
@@ -47,5 +47,6 @@ export function useShareOperations() {
     return {
         handleDelete,
         handleCopy,
+        isDeleting: deleteShareMutation.isPending,
     }
 }
