@@ -1,123 +1,68 @@
-import { useState, useCallback } from 'react'
-import { api } from '@/src/lib/api/client'
-import { validateUrl, validateCronExpr } from '@/src/utils'
-import { useFormUpdate } from '@/src/lib/hooks'
-import type { SubResponse, SubRequest } from '@/src/types/sub'
+import { useForm } from 'react-hook-form'
+import { useEffect, useMemo } from 'react'
+import { toast } from 'sonner'
+import { useSubStore } from '@/src/store/subStore'
+import type { SubRequest } from '@/src/types/sub'
 
+interface UseSubFormProps {
+  initialData?: SubRequest | undefined
+  editingSubId?: number | undefined
+  onSuccess?: () => void
+  isOpen?: boolean
+}
 
-const DEFAULT_FORM_DATA: SubRequest = {
-    name: "",
+export function useSubForm({
+  initialData,
+  editingSubId,
+  onSuccess,
+  isOpen = true
+}: UseSubFormProps = {}) {
+  const subStore = useSubStore()
+
+  const defaultData = useMemo((): SubRequest => ({
+    name: '',
     enable: true,
-    cron_expr: "0 */6 * * *",
+    cron_expr: '0 */6 * * *',
     config: {
-        url: "",
-        proxy: false,
-        timeout: 10,
+      url: '',
+      proxy: false,
+      timeout: 10,
     },
+  }), [])
+
+  const form = useForm<SubRequest>({
+    defaultValues: initialData || defaultData
+  })
+
+  const { handleSubmit, reset } = form
+
+  useEffect(() => {
+    if (isOpen) {
+      reset(initialData || defaultData)
+    }
+  }, [initialData, reset, defaultData, isOpen])
+
+  const onSubmit = async (data: SubRequest) => {
+    try {
+      if (editingSubId) {
+        await subStore.updateSub(editingSubId, data)
+        toast.success('订阅更新成功')
+      } else {
+        await subStore.createSub(data)
+        toast.success('订阅创建成功')
+      }
+
+      onSuccess?.()
+    } catch (error) {
+      const errorMessage = editingSubId ? '更新订阅失败' : '创建订阅失败'
+      toast.error(errorMessage)
+      console.error('Failed to save subscription:', error)
+    }
+  }
+
+  return {
+    form,
+    onSubmit: handleSubmit(onSubmit),
+    isEditing: !!editingSubId,
+  }
 }
-
-function validateSubscriptionForm(data: SubRequest): { isValid: boolean; errors: string[] } {
-    const errors: string[] = []
-
-    if (!data.name.trim()) {
-        errors.push('请输入订阅名称')
-    }
-
-    if (!validateUrl(data.config.url)) {
-        errors.push('请输入有效的订阅链接')
-    }
-
-    if (!validateCronExpr(data.cron_expr)) {
-        errors.push('请输入有效的Cron表达式')
-    }
-
-    return {
-        isValid: errors.length === 0,
-        errors
-    }
-}
-
-export function useSubForm() {
-    const [formData, setFormData] = useState<SubRequest>(DEFAULT_FORM_DATA)
-    const [editingSubscription, setEditingSubscription] = useState<SubResponse | null>(null)
-    const [isDialogOpen, setIsDialogOpen] = useState(false)
-    const [isLoadingEdit, setIsLoadingEdit] = useState(false)
-
-    const { updateFormField, updateConfigField } = useFormUpdate(setFormData)
-
-
-
-
-    const handleSubmit = useCallback(async (e: React.FormEvent) => {
-        e.preventDefault()
-
-        const validation = validateSubscriptionForm(formData)
-        if (!validation.isValid) {
-            return
-        }
-
-
-        try {
-            const submitData: SubRequest = {
-                name: formData.name,
-                enable: formData.enable,
-                cron_expr: formData.cron_expr,
-                config: formData.config,
-            }
-
-            if (editingSubscription) {
-                await api.updateSubscription(editingSubscription.id, submitData)
-            } else {
-                await api.createSubscription(submitData)
-            }
-
-            setIsDialogOpen(false)
-            setEditingSubscription(null)
-            setFormData(DEFAULT_FORM_DATA)
-        } catch (error) {
-            console.error('Failed to save subscription:', error)
-        }
-    }, [formData, editingSubscription])
-
-    const handleEdit = useCallback((subscription: SubResponse) => {
-        setIsLoadingEdit(true)
-        setEditingSubscription(subscription)
-        setFormData({
-            name: subscription.name,
-            enable: subscription.enable,
-            cron_expr: subscription.cron_expr,
-            config: {
-                url: subscription.config.url || "",
-                proxy: subscription.config.proxy || false,
-                timeout: subscription.config.timeout || 10,
-            },
-        })
-        setIsDialogOpen(true)
-        setIsLoadingEdit(false)
-    }, [])
-
-    const openCreateDialog = useCallback(() => {
-        setEditingSubscription(null)
-        setFormData(DEFAULT_FORM_DATA)
-        setIsDialogOpen(true)
-    }, [])
-
-    const closeDialog = useCallback(() => {
-        setIsDialogOpen(false)
-        setEditingSubscription(null)
-        setFormData(DEFAULT_FORM_DATA)
-    }, [])
-
-    return {
-        formData,
-        editingSubscription,
-        isDialogOpen,
-        isLoadingEdit,
-        updateFormField,
-        updateConfigField,
-        handleSubmit,
-        handleEdit,
-        openCreateDialog,
-        closeDialog,
-    }
-} 

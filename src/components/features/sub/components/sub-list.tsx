@@ -1,38 +1,39 @@
+import { useEffect } from "react"
 import { Button } from "@/src/components/ui/button"
 import { Card, CardContent } from "@/src/components/ui/card"
 import { Table, TableBody, TableCell, TableRow } from "@/src/components/ui/table"
 import { InlineLoading } from "@/src/components/ui/loading"
 import { RefreshCw, Edit, Trash2 } from "lucide-react"
 import { formatLastRunTime } from "@/src/utils"
-import StatusBadge from "@/src/components/shared/status-badge"
+import { StatusBadge } from "@/src/components/shared/status-badge"
+import { formatSpeed } from "../utils"
+import { useSubStore } from "@/src/store/subStore"
+import { useSubOperations } from "../hooks/useSubOperations"
+import { useOverflowDetection } from "@/src/lib/hooks/useOverflowDetection"
 import type { SubResponse } from "@/src/types/sub"
 
 interface SubscriptionListProps {
-    sub: SubResponse[]
-    isLoading: boolean
-    refreshingId: number | null
-    deletingId: number | null
-    isLoadingEdit?: boolean
     onEdit: (subscription: SubResponse) => void
-    onDelete: (id: number, name: string) => void
-    onRefresh: (id: number) => void
     onShowDetail: (subscription: SubResponse) => void
 }
 
 export function SubList({
-    sub,
-    isLoading,
-    refreshingId,
-    deletingId,
-    isLoadingEdit = false,
     onEdit,
-    onDelete,
-    onRefresh,
     onShowDetail,
 }: SubscriptionListProps) {
+    const { subs, isLoading, loadSubs } = useSubStore()
+    const { refreshingId, deletingId, handleDelete, handleRefresh } = useSubOperations()
+    const { containerRef, contentRef, isOverflowing, checkOverflow } = useOverflowDetection<HTMLTableElement>()
 
+    useEffect(() => {
+        loadSubs()
+    }, [loadSubs])
 
-    const formatSpeed = (speed: number) => ((speed || 0) / 1024 / 1024).toFixed(1)
+    useEffect(() => {
+        if (!isLoading) {
+            checkOverflow()
+        }
+    }, [isLoading, checkOverflow])
 
     if (isLoading) {
         return (
@@ -44,7 +45,7 @@ export function SubList({
         )
     }
 
-    if (sub.length === 0) {
+    if (subs.length === 0) {
         return (
             <Card>
                 <CardContent>
@@ -56,73 +57,68 @@ export function SubList({
         )
     }
 
+
     return (
         <Card>
             <CardContent>
-                <Table>
-                    <TableBody>
-                        {sub.sort((a, b) => a.id - b.id).map((sub) => (
-                            <TableRow key={sub.id}>
-                                <TableCell className="space-y-1">
-                                    <div className="font-medium" onClick={() => onShowDetail(sub)}>
-                                        {sub.name}
-                                    </div>
-                                    <div className="text-sm text-muted-foreground">{sub?.cron_expr || 'N/A'}</div>
-                                </TableCell>
-                                <TableCell className="space-y-2 flex flex-col">
-                                    <StatusBadge status={sub.status} />
-                                </TableCell>
-                                <TableCell className="text-xs space-y-1">
-                                    <div>平均延迟: <span className="text-muted-foreground">{sub.info?.delay || 0}ms</span></div>
-                                    <div>平均风险: <span className="text-muted-foreground">{sub.info?.risk || 0}</span></div>
-                                    <div>↑{formatSpeed(sub.info?.speed_up)}MB/s ↓{formatSpeed(sub.info?.speed_down)}MB/s</div>
-                                </TableCell>
-                                <TableCell className="text-xs space-y-1">
-                                    <div>最后运行: <span className="text-muted-foreground">{formatLastRunTime(sub.result?.last_run)}</span></div>
-                                    <div>执行时长: <span className="text-muted-foreground">{sub.result?.duration || 0}ms</span></div>
-                                    <div>状态消息: <span className="text-muted-foreground">{sub.result?.msg || '无'}</span></div>
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() => onRefresh(sub.id)}
-                                        disabled={refreshingId === sub.id}
-                                        className={refreshingId === sub.id ? 'opacity-50' : ''}
-                                    >
-                                        <RefreshCw className={`h-4 w-4 ${refreshingId === sub.id ? 'animate-spin' : ''}`} />
-                                    </Button>
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() => onEdit(sub)}
-                                        disabled={isLoadingEdit}
-                                        className={isLoadingEdit ? 'opacity-50' : ''}
-                                    >
-                                        {isLoadingEdit ? (
-                                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                                        ) : (
+                <div className="overflow-x-auto" ref={containerRef}>
+                    <Table ref={contentRef}>
+                        <TableBody>
+                            {subs.sort((a, b) => a.id - b.id).map((sub) => (
+                                <TableRow key={sub.id}>
+                                    <TableCell className="space-y-1">
+                                        <div className="font-medium" onClick={() => onShowDetail(sub)}>
+                                            {sub.name}
+                                        </div>
+                                        <div className="text-sm text-muted-foreground">{sub?.cron_expr || 'N/A'}</div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <StatusBadge status={sub.status} />
+                                    </TableCell>
+                                    <TableCell className="text-xs space-y-1">
+                                        <div>平均延迟: <span className="text-muted-foreground">{sub.info?.delay || 0}ms</span></div>
+                                        <div className="text-muted-foreground">↑{formatSpeed(sub.info?.speed_up || 0)} ↓{formatSpeed(sub.info?.speed_down || 0)}</div>
+                                    </TableCell>
+                                    <TableCell className="text-xs space-y-1">
+                                        <div>最后运行: <span className="text-muted-foreground">{formatLastRunTime(sub.result?.last_run)}</span></div>
+                                        <div>执行时长: <span className="text-muted-foreground">{sub.result?.duration || 0}ms</span></div>
+                                    </TableCell>
+                                    <TableCell className={`text-right sticky right-0 bg-background ${isOverflowing ? 'shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.1)]' : ''}`}>
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => handleRefresh(sub.id)}
+                                            disabled={refreshingId === sub.id}
+                                            className={refreshingId === sub.id ? 'opacity-50' : ''}
+                                        >
+                                            <RefreshCw className={`h-4 w-4 ${refreshingId === sub.id ? 'animate-spin' : ''}`} />
+                                        </Button>
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => onEdit(sub)}
+                                        >
                                             <Edit className="h-4 w-4" />
-                                        )}
-                                    </Button>
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() => onDelete(sub.id, sub.name)}
-                                        disabled={deletingId === sub.id}
-                                        className={deletingId === sub.id ? 'opacity-50' : ''}
-                                    >
-                                        {deletingId === sub.id ? (
-                                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                                        ) : (
-                                            <Trash2 className="h-4 w-4" />
-                                        )}
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                                        </Button>
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => handleDelete(sub.id, sub.name)}
+                                            disabled={deletingId === sub.id}
+                                            className={deletingId === sub.id ? 'opacity-50' : ''}
+                                        >
+                                            {deletingId === sub.id ? (
+                                                <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                                            ) : (
+                                                <Trash2 className="h-4 w-4" />
+                                            )}
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
             </CardContent>
         </Card>
     )
