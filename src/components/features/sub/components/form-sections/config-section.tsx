@@ -1,5 +1,4 @@
 import { Controller, Control } from 'react-hook-form'
-import { Input } from '@/src/components/ui/input'
 import { Label } from '@/src/components/ui/label'
 import { Switch } from '@/src/components/ui/switch'
 import type { SubRequest } from '@/src/types/sub'

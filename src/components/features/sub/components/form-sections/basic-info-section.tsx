@@ -1,7 +1,6 @@
 import { Controller, Control } from 'react-hook-form'
 import { Input } from '@/src/components/ui/input'
 import { Label } from '@/src/components/ui/label'
-import { Switch } from '@/src/components/ui/switch'
 import type { SubRequest } from '@/src/types/sub'
 
 export function BasicInfoSection({ control }: { control: Control<SubRequest> }) {
@@ -80,7 +79,7 @@ export function BasicInfoSection({ control }: { control: Control<SubRequest> }) 
                         )}
                     />
                 </div>
-                
+
                 <div className="space-y-2">
                     <Label htmlFor="timeout" className="mb-2 block">超时时间（秒）</Label>
                     <Controller
