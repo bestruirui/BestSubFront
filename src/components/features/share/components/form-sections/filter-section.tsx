@@ -9,7 +9,7 @@ export function FilterSection({ control }: { control: Control<Record<string, unk
             <div className="grid grid-cols-2 gap-4">
                 <div>
                     <Label htmlFor="speed_up_more" className="mb-2 block">
-                        上传速度 {'>'} (MB/s)
+                        上传速度 {'>'} (KB/s)
                     </Label>
                     <Controller
                         name="gen.filter.speed_up_more"
@@ -31,7 +31,7 @@ export function FilterSection({ control }: { control: Control<Record<string, unk
 
                 <div>
                     <Label htmlFor="speed_down_more" className="mb-2 block">
-                        下载速度 {'>'} (MB/s)
+                        下载速度 {'>'} (KB/s)
                     </Label>
                     <Controller
                         name="gen.filter.speed_down_more"
