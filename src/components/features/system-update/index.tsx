@@ -10,7 +10,6 @@ import {
   IconRefresh,
   IconAlertCircle,
   IconCheck,
-  IconInfoCircle
 } from "@tabler/icons-react"
 
 import {
@@ -21,7 +20,7 @@ import {
   DialogTitle,
 } from "@/src/components/ui/dialog"
 import { Button } from "@/src/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { Badge } from "@/src/components/ui/badge"
 import {
   Accordion,
@@ -48,7 +47,6 @@ interface ComponentStatus {
   isUpdating: boolean
   updateSuccess: boolean | null
   updateError: string | null
-  manualUpdate?: boolean
 }
 
 export function SystemUpdateDialog({ open, onOpenChange }: SystemUpdateDialogProps) {
@@ -64,7 +62,6 @@ export function SystemUpdateDialog({ open, onOpenChange }: SystemUpdateDialogPro
       isUpdating: false,
       updateSuccess: null,
       updateError: null,
-      manualUpdate: true
     },
     {
       name: 'webui',
@@ -186,7 +183,7 @@ export function SystemUpdateDialog({ open, onOpenChange }: SystemUpdateDialogPro
           <div className="space-y-4 max-h-[60vh] overflow-y-auto scrollbar-hide">
             {components.map((component) => (
               <Card key={component.name}>
-                <CardHeader className="pb-3">
+                <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-base">{component.displayName}</CardTitle>
                     <div className="flex items-center gap-2">
@@ -202,31 +199,25 @@ export function SystemUpdateDialog({ open, onOpenChange }: SystemUpdateDialogPro
                       )}
                     </div>
                   </div>
-                  <CardDescription className="text-sm space-y-1">
-                    <div>当前版本: <span className="font-medium">{component.currentVersion}</span></div>
-                    <div>最新版本: <span />
-                      <span className={`font-medium ${component.latestVersion !== '加载中...' && component.currentVersion !== component.latestVersion ? 'text-orange-600' : ''}`}>
-                        {component.latestVersion}
-                      </span>
-                    </div>
-                  </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {component.updateError && (
-                      <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 p-2 rounded">
-                        <IconAlertCircle className="h-4 w-4" />
-                        {component.updateError}
-                      </div>
-                    )}
+                <CardContent className="text-sm">
+                  <div>
+                    <span>当前版本: </span>
+                    <span>{component.currentVersion}</span>
+                  </div>
+                  <div>
+                    <span>最新版本: </span>
+                    <span className={`${component.latestVersion !== '加载中...' && component.currentVersion !== component.latestVersion ? 'text-orange-600' : ''}`}>
+                      {component.latestVersion}
+                    </span>
 
                     {component.updateBody && (
-                      <Accordion type="single" collapsible className="w-full">
-                        <AccordionItem value="update-content" className="border-none">
-                          <AccordionTrigger className="py-2 text-sm hover:no-underline">
-                            <span className="text-left">查看更新内容</span>
+                      <Accordion type="single" collapsible>
+                        <AccordionItem value="update-content" >
+                          <AccordionTrigger className="hover:no-underline">
+                            <span>查看更新内容</span>
                           </AccordionTrigger>
-                          <AccordionContent className="pb-2">
+                          <AccordionContent>
                             <div
                               className=" [&_a]:text-blue-600 leading-relaxed [&_ul]:list-inside [&_li]:list-disc [&_li]:ml-4"
                               dangerouslySetInnerHTML={{
@@ -238,39 +229,35 @@ export function SystemUpdateDialog({ open, onOpenChange }: SystemUpdateDialogPro
                       </Accordion>
                     )}
 
-                    {component.manualUpdate ? (
-                      <Button
-                        disabled
-                        className="w-full opacity-75 cursor-not-allowed"
-                        variant="secondary"
-                      >
-                        <IconInfoCircle className="h-4 w-4 mr-2" />
-                        请手动更新
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={() => handleUpdate(component.name as UpdateComponent)}
-                        disabled={component.isUpdating || component.latestVersion === component.currentVersion || component.latestVersion === '加载中...'}
-                        className="w-full"
-                      >
-                        {component.isUpdating ? (
-                          <>
-                            <IconLoader2 className="h-4 w-4 animate-spin mr-2" />
-                            更新中...
-                          </>
-                        ) : component.latestVersion === component.currentVersion ? (
-                          <>
-                            <IconCheck className="h-4 w-4 mr-2" />
-                            已是最新版本
-                          </>
-                        ) : (
-                          <>
-                            <IconDownload className="h-4 w-4 mr-2" />
-                            立即更新
-                          </>
-                        )}
-                      </Button>
+                    {component.updateError && (
+                      <div className="flex items-center gap-2 text-destructive bg-destructive/10 p-2 rounded">
+                        <IconAlertCircle className="h-4 w-4" />
+                        {component.updateError}
+                      </div>
                     )}
+
+                    <Button
+                      onClick={() => handleUpdate(component.name as UpdateComponent)}
+                      disabled={component.isUpdating || component.latestVersion === component.currentVersion || component.latestVersion === '加载中...'}
+                      className="w-full"
+                    >
+                      {component.isUpdating ? (
+                        <>
+                          <IconLoader2 className="h-4 w-4 animate-spin mr-2" />
+                          更新中...
+                        </>
+                      ) : component.latestVersion === component.currentVersion ? (
+                        <>
+                          <IconCheck className="h-4 w-4 mr-2" />
+                          已是最新版本
+                        </>
+                      ) : (
+                        <>
+                          <IconDownload className="h-4 w-4 mr-2" />
+                          立即更新
+                        </>
+                      )}
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
