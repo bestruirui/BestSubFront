@@ -79,6 +79,8 @@ export function createDefaultShareData(): ShareRequest {
         token: '',
         gen: {
             filter: {
+                sub_id_exclude: false,
+                country_exclude: false,
                 sub_id: [],
                 speed_up_more: 0,
                 speed_down_more: 0,

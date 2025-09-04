@@ -31,9 +31,11 @@ export interface ShareResponse {
 
 export interface ShareFilter {
     sub_id: number[]
+    sub_id_exclude: boolean
     speed_up_more: number
     speed_down_more: number
     country: string[]
+    country_exclude: boolean
     delay_less_than: number
     alive_status: number
     risk_less_than: number

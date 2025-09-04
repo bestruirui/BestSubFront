@@ -7,6 +7,7 @@ import { Controller, Control } from 'react-hook-form'
 import { Label } from '@/src/components/ui/label'
 import { Badge } from '@/src/components/ui/badge'
 import { Input } from '@/src/components/ui/input'
+import { Switch } from '@/src/components/ui/switch'
 
 interface CountrySectionProps {
     control: Control<Record<string, unknown> | any>
@@ -277,7 +278,8 @@ export function CountrySection({ control, fieldName }: CountrySectionProps) {
             control={control}
             render={({ field }) => {
                 const selectedCodes = (field.value as string[]) || []
-
+                const excludeFieldName = fieldName.replace('country', 'country_exclude')
+                
                 const handleAddCountry = (code: string) => {
                     if (!selectedCodes.includes(code)) {
                         field.onChange([...selectedCodes, code])
@@ -305,9 +307,27 @@ export function CountrySection({ control, fieldName }: CountrySectionProps) {
 
                 return (
                     <div className="w-full">
-                        <Label className="mb-2 block">
-                            国家
-                        </Label>
+                        <div className="flex items-center justify-between mb-2">
+                            <Label className="block">
+                                国家
+                            </Label>
+                            <div className="flex items-center space-x-2">
+                                <Label htmlFor={`${fieldName}-exclude`} className="text-sm text-muted-foreground">
+                                    排除模式
+                                </Label>
+                                <Controller
+                                    name={excludeFieldName}
+                                    control={control}
+                                    render={({ field: excludeField }) => (
+                                        <Switch
+                                            id={`${fieldName}-exclude`}
+                                            checked={excludeField.value || false}
+                                            onCheckedChange={excludeField.onChange}
+                                        />
+                                    )}
+                                />
+                            </div>
+                        </div>
 
                         {selectedCodes.length > 0 && (
                             <div className="mb-3">

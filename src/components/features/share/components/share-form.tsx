@@ -54,7 +54,11 @@ export function ShareForm({
                     <ConfigSection control={control} watch={watch} reset={reset} />
 
                     {/* 订阅选择 */}
-                    <SubscriptionSection control={control} fieldName="gen.filter.sub_id" />
+                    <SubscriptionSection 
+                        control={control} 
+                        subIdField="gen.filter.sub_id" 
+                        subIdExcludeField="gen.filter.sub_id_exclude" 
+                    />
 
                     {/* 过滤条件 */}
                     <FilterSection control={control} />

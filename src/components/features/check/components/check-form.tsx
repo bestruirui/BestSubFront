@@ -55,7 +55,11 @@ export function CheckForm({
 
           <LogConfig control={control} />
 
-          <SubscriptionSection control={control} fieldName="task.sub_id" />
+          <SubscriptionSection
+            control={control}
+            subIdField="task.sub_id"
+            subIdExcludeField="task.sub_id_exclude"
+          />
 
           <ExtraConfigSection control={control} />
 
