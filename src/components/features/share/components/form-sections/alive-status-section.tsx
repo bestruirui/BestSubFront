@@ -11,6 +11,8 @@ interface AliveStatusSectionProps {
 const ALIVE_STATUS_FLAGS = [
     { value: 1, label: '存活', name: 'Alive' },           // 1 << 0
     { value: 2, label: '国家', name: 'Country' },         // 1 << 1
+    { value: 4, label: 'TikTok', name: 'TikTok' },             // 1 << 2
+    { value: 8, label: 'TikTok IDC', name: 'TikTok IDC' },     // 1 << 3
 ] as const
 
 export function AliveStatusSection({ control, fieldName }: AliveStatusSectionProps) {
