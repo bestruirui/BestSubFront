@@ -145,6 +145,11 @@ export function SystemUpdateDialog({ open, onOpenChange }: SystemUpdateDialogPro
         )
       )
       toast.success(`${components.find(c => c.name === componentName)?.displayName} 更新成功`)
+      if (componentName === 'webui') {
+        setTimeout(() => {
+          window.location.reload()
+        }, 1000)
+      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : '更新失败'
       setComponents(prev =>
