@@ -1,15 +1,17 @@
 import { useState } from "react"
 import { Button } from "@/src/components/ui/button"
-import { Plus } from "lucide-react"
+import { Plus, Upload } from "lucide-react"
 import { SubForm } from "./sub-form"
 import { SubDetail } from "./sub-detail"
 import { SubList } from "./sub-list"
+import { BatchSubForm } from "./batch-sub-form"
 import type { SubResponse } from "@/src/types/sub"
 
 export function SubPage() {
     const [detailSubscription, setDetailSubscription] = useState<SubResponse | null>(null)
     const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false)
     const [isFormDialogOpen, setIsFormDialogOpen] = useState(false)
+    const [isBatchFormDialogOpen, setIsBatchFormDialogOpen] = useState(false)
     const [editingSubscription, setEditingSubscription] = useState<SubResponse | null>(null)
 
 
@@ -23,9 +25,17 @@ export function SubPage() {
         setIsFormDialogOpen(true)
     }
 
+    const handleBatchCreate = () => {
+        setIsBatchFormDialogOpen(true)
+    }
+
     const handleFormSuccess = () => {
         setIsFormDialogOpen(false)
         setEditingSubscription(null)
+    }
+
+    const handleBatchFormSuccess = () => {
+        setIsBatchFormDialogOpen(false)
     }
 
 
@@ -41,10 +51,16 @@ export function SubPage() {
                     <h1 className="text-2xl font-bold">订阅管理</h1>
                 </div>
 
-                <Button onClick={handleCreate}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    添加订阅
-                </Button>
+                <div className="flex gap-2">
+                    <Button variant="outline" onClick={handleBatchCreate}>
+                        <Upload className="h-4 w-4 mr-2" />
+                        批量添加
+                    </Button>
+                    <Button onClick={handleCreate}>
+                        <Plus className="h-4 w-4 mr-2" />
+                        添加订阅
+                    </Button>
+                </div>
             </div>
 
             <SubForm
@@ -62,6 +78,11 @@ export function SubPage() {
                 isOpen={isFormDialogOpen}
                 onClose={handleFormSuccess}
                 editingSubId={editingSubscription?.id}
+            />
+
+            <BatchSubForm
+                isOpen={isBatchFormDialogOpen}
+                onClose={handleBatchFormSuccess}
             />
 
             <div className="px-4 lg:px-6">

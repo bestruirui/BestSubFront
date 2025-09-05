@@ -162,6 +162,10 @@ export const api = {
     const response = await apiClient.post<ApiResponse<SubResponse>>(API_PATH.sub, data)
     return response.data
   },
+  async batchCreateSubscriptions(data: SubRequest[]): Promise<SubResponse[]> {
+    const response = await apiClient.post<ApiResponse<SubResponse[]>>(`${API_PATH.sub}/batch`, data)
+    return response.data
+  },
   async updateSubscription(id: number, data: SubRequest): Promise<SubResponse> {
     const response = await apiClient.put<ApiResponse<SubResponse>>(`${API_PATH.sub}/${id}`, data)
     return response.data
