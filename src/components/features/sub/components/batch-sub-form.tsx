@@ -43,7 +43,6 @@ export function BatchSubForm({ isOpen, onClose }: BatchSubFormProps) {
         setIsSubmitting(true)
 
         try {
-            // 解析 URLs
             const urls = data.urls
                 .split('\n')
                 .map(url => url.trim())
@@ -54,7 +53,6 @@ export function BatchSubForm({ isOpen, onClose }: BatchSubFormProps) {
                 return
             }
 
-            // 构建订阅请求数组
             const subscriptions: SubRequest[] = urls.map(url => ({
                 name: generateNameFromUrl(url) || '未知订阅',
                 enable: data.enable,
@@ -66,7 +64,6 @@ export function BatchSubForm({ isOpen, onClose }: BatchSubFormProps) {
                 },
             }))
 
-            // 批量创建
             const results = await batchCreateMutation.mutateAsync(subscriptions)
 
             const successCount = results.length
@@ -98,10 +95,9 @@ export function BatchSubForm({ isOpen, onClose }: BatchSubFormProps) {
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                    {/* 订阅链接输入 */}
                     <div className="space-y-2">
                         <Label htmlFor="urls" className="mb-2 block">
-                            订阅链接 (每行一个)
+                            订阅链接
                         </Label>
                         <Textarea
                             id="urls"
@@ -118,13 +114,10 @@ https://example.com/subscription3`}
                         </p>
                     </div>
 
-                    {/* 统一配置 */}
                     <div className="space-y-4">
-                        <h3 className="text-sm font-medium">统一配置</h3>
                         <ConfigSection control={control as unknown as Control<SubRequest>} />
                     </div>
 
-                    {/* 操作按钮 */}
                     <div className="flex gap-2 pt-4">
                         <Button
                             type="submit"
