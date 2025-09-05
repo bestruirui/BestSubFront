@@ -37,7 +37,7 @@ export function BatchSubForm({ isOpen, onClose }: BatchSubFormProps) {
         }
     })
 
-    const { control, handleSubmit, reset, watch } = form
+    const { control, handleSubmit, reset } = form
 
     const onSubmit = async (data: BatchFormData) => {
         setIsSubmitting(true)

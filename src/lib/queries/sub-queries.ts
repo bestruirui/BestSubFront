@@ -99,6 +99,30 @@ export function useDeleteSub() {
     })
 }
 
+export function useRefreshSub() {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: (id: number) => api.refreshSubscription(id),
+
+        onSuccess: (_, id) => {
+            queryClient.invalidateQueries({
+                queryKey: subKeys.lists(),
+                refetchType: 'active'
+            })
+
+            queryClient.invalidateQueries({
+                queryKey: subKeys.detail(id),
+                refetchType: 'active'
+            })
+        },
+
+        onError: () => {
+            queryClient.invalidateQueries({ queryKey: subKeys.lists() })
+        },
+    })
+}
+
 export function useBatchCreateSub() {
     const queryClient = useQueryClient()
 

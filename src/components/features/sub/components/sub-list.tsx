@@ -1,15 +1,16 @@
-import { useEffect } from "react"
+import { useEffect, useCallback } from "react"
 import { Button } from "@/src/components/ui/button"
 import { Card, CardContent } from "@/src/components/ui/card"
 import { Table, TableBody, TableCell, TableRow } from "@/src/components/ui/table"
 import { InlineLoading } from "@/src/components/ui/loading"
 import { RefreshCw, Edit, Trash2 } from "lucide-react"
+import { toast } from "sonner"
 import { formatLastRunTime } from "@/src/utils"
 import { StatusBadge } from "@/src/components/shared/status-badge"
 import { formatSpeed } from "../utils"
-import { useSubs } from "@/src/lib/queries/sub-queries"
-import { useSubOperations } from "../hooks/useSubOperations"
+import { useSubs, useDeleteSub, useRefreshSub } from "@/src/lib/queries/sub-queries"
 import { useOverflowDetection } from "@/src/lib/hooks/useOverflowDetection"
+import { useAlert } from "@/src/components/providers"
 import type { SubResponse } from "@/src/types/sub"
 
 interface SubscriptionListProps {
@@ -22,7 +23,9 @@ export function SubList({
     onShowDetail,
 }: SubscriptionListProps) {
     const { data: subs = [], isLoading, error } = useSubs()
-    const { refreshingId, deletingId, handleDelete, handleRefresh } = useSubOperations()
+    const deleteSubMutation = useDeleteSub()
+    const refreshSubMutation = useRefreshSub()
+    const { confirm } = useAlert()
     const { containerRef, contentRef, isOverflowing, checkOverflow } = useOverflowDetection<HTMLTableElement>()
 
     useEffect(() => {
@@ -30,6 +33,36 @@ export function SubList({
             checkOverflow()
         }
     }, [isLoading, checkOverflow])
+
+    const handleDelete = useCallback(async (id: number, name: string) => {
+        const confirmed = await confirm({
+            title: '删除订阅',
+            description: `确定要删除订阅 "${name}" 吗？`,
+            confirmText: '删除',
+            cancelText: '取消',
+            variant: 'destructive'
+        })
+
+        if (confirmed) {
+            try {
+                await deleteSubMutation.mutateAsync(id)
+                toast.success('删除成功')
+            } catch (error) {
+                console.error('Failed to delete subscription:', error)
+                toast.error('删除失败')
+            }
+        }
+    }, [confirm, deleteSubMutation])
+
+    const handleRefresh = useCallback(async (id: number) => {
+        try {
+            await refreshSubMutation.mutateAsync(id)
+            toast.success('刷新成功')
+        } catch (error) {
+            console.error('Failed to refresh subscription:', error)
+            toast.error('刷新失败')
+        }
+    }, [refreshSubMutation])
 
     if (isLoading) {
         return (
@@ -96,10 +129,10 @@ export function SubList({
                                             size="sm"
                                             variant="outline"
                                             onClick={() => handleRefresh(sub.id)}
-                                            disabled={refreshingId === sub.id}
-                                            className={refreshingId === sub.id ? 'opacity-50' : ''}
+                                            disabled={refreshSubMutation.isPending && refreshSubMutation.variables === sub.id}
+                                            className={refreshSubMutation.isPending && refreshSubMutation.variables === sub.id ? 'opacity-50' : ''}
                                         >
-                                            <RefreshCw className={`h-4 w-4 ${refreshingId === sub.id ? 'animate-spin' : ''}`} />
+                                            <RefreshCw className={`h-4 w-4 ${refreshSubMutation.isPending && refreshSubMutation.variables === sub.id ? 'animate-spin' : ''}`} />
                                         </Button>
                                         <Button
                                             size="sm"
@@ -112,10 +145,10 @@ export function SubList({
                                             size="sm"
                                             variant="outline"
                                             onClick={() => handleDelete(sub.id, sub.name)}
-                                            disabled={deletingId === sub.id}
-                                            className={deletingId === sub.id ? 'opacity-50' : ''}
+                                            disabled={deleteSubMutation.isPending && deleteSubMutation.variables === sub.id}
+                                            className={deleteSubMutation.isPending && deleteSubMutation.variables === sub.id ? 'opacity-50' : ''}
                                         >
-                                            {deletingId === sub.id ? (
+                                            {deleteSubMutation.isPending && deleteSubMutation.variables === sub.id ? (
                                                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                                             ) : (
                                                 <Trash2 className="h-4 w-4" />
