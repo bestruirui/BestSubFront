@@ -98,26 +98,6 @@ export const SUB_RULES: KeyValue[] = [
     "value": "https://raw.githubusercontent.com/flyhigherpi/merlinclash_clash_related/master/Rule_config/ZHANG.ini"
   },
   {
-    "key": "酷酷自用",
-    "value": "https://raw.githubusercontent.com/xiaoshenxian233/cool/rule/complex.ini"
-  },
-  {
-    "key": "PharosPro无测速",
-    "value": "https://subweb.s3.fr-par.scw.cloud/RemoteConfig/special/phaors.ini"
-  },
-  {
-    "key": "分区域故障转移",
-    "value": "https://raw.githubusercontent.com/flyhigherpi/merlinclash_clash_related/master/Rule_config/ZHANG_Area_Fallback.ini"
-  },
-  {
-    "key": "分区域自动测速",
-    "value": "https://raw.githubusercontent.com/flyhigherpi/merlinclash_clash_related/master/Rule_config/ZHANG_Area_Urltest.ini"
-  },
-  {
-    "key": "分区域无自动测速",
-    "value": "https://raw.githubusercontent.com/flyhigherpi/merlinclash_clash_related/master/Rule_config/ZHANG_Area_NoAuto.ini"
-  },
-  {
     "key": "OoHHHHHHH",
     "value": "https://raw.githubusercontent.com/OoHHHHHHH/ini/master/config.ini"
   },
@@ -153,38 +133,10 @@ export const SUB_RULES: KeyValue[] = [
     "key": "eHpo1 规则",
     "value": "https://gist.githubusercontent.com/tindy2013/1fa08640a9088ac8652dbd40c5d2715b/raw/ehpo1_main.ini"
   },
-  {
-    "key": "多策略组默认白名单模式",
-    "value": "https://raw.nameless13.com/api/public/dl/ROzQqi2S/white.ini"
-  },
-  {
-    "key": "多策略组可以有效减少审计触发",
-    "value": "https://raw.nameless13.com/api/public/dl/ptLeiO3S/mayinggfw.ini"
-  },
-  {
-    "key": "精简策略默认白名单",
-    "value": "https://raw.nameless13.com/api/public/dl/FWSh3dXz/easy3.ini"
-  },
-  {
-    "key": "多策略增加SMTP策略",
-    "value": "https://raw.nameless13.com/api/public/dl/L_-vxO7I/youtube.ini"
-  },
-  {
-    "key": "无策略入门推荐",
-    "value": "https://raw.nameless13.com/api/public/dl/zKF9vFbb/easy.ini"
-  },
-  {
-    "key": "无策略入门推荐国家分组",
-    "value": "https://raw.nameless13.com/api/public/dl/E69bzCaE/easy2.ini"
-  },
-  {
-    "key": "无策略仅IPIP CN + Final",
-    "value": "https://raw.nameless13.com/api/public/dl/XHr0miMg/ipip.ini"
-  },
-  {
-    "key": "无策略魅影vip分组",
-    "value": "https://raw.nameless13.com/api/public/dl/BBnfb5lD/MAYINGVIP.ini"
-  },
+
+
+
+
   {
     "key": "品云专属配置（仅香港区域分组）",
     "value": "https://raw.githubusercontent.com/Mazeorz/airports/master/Clash/Examine.ini"
@@ -213,78 +165,14 @@ export const SUB_RULES: KeyValue[] = [
     "key": "DlerCloud Silver 李哥定制规则",
     "value": "https://gist.githubusercontent.com/tindy2013/1fa08640a9088ac8652dbd40c5d2715b/raw/dlercloud_lige_silver.ini"
   },
-  {
-    "key": "ProxyStorage自用",
-    "value": "https://unpkg.com/proxy-script/config/Clash/clash.ini"
-  },
+
   {
     "key": "ShellClash修改版规则 (by UlinoyaPed)",
     "value": "https://github.com/UlinoyaPed/ShellClash/raw/master/rules/ShellClash.ini"
   },
-  {
-    "key": "EXFLUX",
-    "value": "https://gist.github.com/jklolixxs/16964c46bad1821c70fa97109fd6faa2/raw/EXFLUX.ini"
-  },
-  {
-    "key": "NaNoport",
-    "value": "https://gist.github.com/jklolixxs/32d4e9a1a5d18a92beccf3be434f7966/raw/NaNoport.ini"
-  },
-  {
-    "key": "CordCloud",
-    "value": "https://gist.github.com/jklolixxs/dfbe0cf71ffc547557395c772836d9a8/raw/CordCloud.ini"
-  },
-  {
-    "key": "BigAirport",
-    "value": "https://gist.github.com/jklolixxs/e2b0105c8be6023f3941816509a4c453/raw/BigAirport.ini"
-  },
-  {
-    "key": "跑路云",
-    "value": "https://gist.github.com/jklolixxs/9f6989137a2cfcc138c6da4bd4e4cbfc/raw/PaoLuCloud.ini"
-  },
-  {
-    "key": "WaveCloud",
-    "value": "https://gist.github.com/jklolixxs/fccb74b6c0018b3ad7b9ed6d327035b3/raw/WaveCloud.ini"
-  },
-  {
-    "key": "几鸡",
-    "value": "https://gist.github.com/jklolixxs/bfd5061dceeef85e84401482f5c92e42/raw/JiJi.ini"
-  },
-  {
-    "key": "四季加速",
-    "value": "https://gist.github.com/jklolixxs/6ff6e7658033e9b535e24ade072cf374/raw/SJ.ini"
-  },
-  {
-    "key": "ImmTelecom",
-    "value": "https://gist.github.com/jklolixxs/24f4f58bb646ee2c625803eb916fe36d/raw/ImmTelecom.ini"
-  },
-  {
-    "key": "AmyTelecom",
-    "value": "https://gist.github.com/jklolixxs/b53d315cd1cede23af83322c26ce34ec/raw/AmyTelecom.ini"
-  },
-  {
-    "key": "LinkCube",
-    "value": "https://subweb.s3.fr-par.scw.cloud/RemoteConfig/customized/convenience.ini"
-  },
-  {
-    "key": "Miaona",
-    "value": "https://gist.github.com/jklolixxs/ff8ddbf2526cafa568d064006a7008e7/raw/Miaona.ini"
-  },
-  {
-    "key": "Foo&Friends",
-    "value": "https://gist.github.com/jklolixxs/df8fda1aa225db44e70c8ac0978a3da4/raw/Foo&Friends.ini"
-  },
-  {
-    "key": "ABCloud",
-    "value": "https://gist.github.com/jklolixxs/b1f91606165b1df82e5481b08fd02e00/raw/ABCloud.ini"
-  },
-  {
-    "key": "咸鱼",
-    "value": "https://raw.githubusercontent.com/SleepyHeeead/subconverter-config/master/remote-config/customized/xianyu.ini"
-  },
-  {
-    "key": "便利店",
-    "value": "https://subweb.oss-cn-hongkong.aliyuncs.com/RemoteConfig/customized/convenience.ini"
-  },
+
+
+
   {
     "key": "CNIX",
     "value": "https://raw.githubusercontent.com/Mazeorz/airports/master/Clash/SSRcloud.ini"
@@ -308,46 +196,6 @@ export const SUB_RULES: KeyValue[] = [
   {
     "key": "Maying",
     "value": "https://raw.githubusercontent.com/SleepyHeeead/subconverter-config/master/remote-config/customized/maying.ini"
-  },
-  {
-    "key": "Ytoo",
-    "value": "https://subweb.s3.fr-par.scw.cloud/RemoteConfig/customized/ytoo.ini"
-  },
-  {
-    "key": "w8ves",
-    "value": "https://raw.nameless13.com/api/public/dl/M-We_Fn7/w8ves.ini"
-  },
-  {
-    "key": "NyanCAT",
-    "value": "https://raw.githubusercontent.com/SleepyHeeead/subconverter-config/master/remote-config/customized/nyancat.ini"
-  },
-  {
-    "key": "Nexitally",
-    "value": "https://subweb.s3.fr-par.scw.cloud/RemoteConfig/customized/nexitally.ini"
-  },
-  {
-    "key": "SoCloud",
-    "value": "https://raw.githubusercontent.com/SleepyHeeead/subconverter-config/master/remote-config/customized/socloud.ini"
-  },
-  {
-    "key": "ARK",
-    "value": "https://raw.githubusercontent.com/SleepyHeeead/subconverter-config/master/remote-config/customized/ark.ini"
-  },
-  {
-    "key": "N3RO",
-    "value": "https://gist.githubusercontent.com/tindy2013/1fa08640a9088ac8652dbd40c5d2715b/raw/n3ro_optimized.ini"
-  },
-  {
-    "key": "Scholar",
-    "value": "https://gist.githubusercontent.com/tindy2013/1fa08640a9088ac8652dbd40c5d2715b/raw/scholar_optimized.ini"
-  },
-  {
-    "key": "Flowercloud",
-    "value": "https://subweb.s3.fr-par.scw.cloud/RemoteConfig/customized/flower.ini"
-  },
-  {
-    "key": "NeteaseUnblock",
-    "value": "https://raw.githubusercontent.com/SleepyHeeead/subconverter-config/master/remote-config/special/netease.ini"
   },
   {
     "key": "Basic",
