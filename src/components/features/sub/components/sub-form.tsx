@@ -3,7 +3,7 @@ import { useEffect, useMemo } from 'react'
 import { toast } from 'sonner'
 import { Button } from "@/src/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/components/ui/dialog"
-import { BasicInfoSection, ConfigSection } from "./form-sections"
+import { BasicInfoSection, ConfigSection, ProtocolFilterSection } from "./form-sections"
 import { useCreateSub, useUpdateSub } from '@/src/lib/queries/sub-queries'
 import type { SubRequest } from "@/src/types/sub"
 
@@ -34,6 +34,9 @@ export function SubForm({
             url: '',
             proxy: false,
             timeout: 10,
+            protocol_filter_enable: false,
+            protocol_filter_mode: false,
+            protocol_filter: [],
         },
     }), [])
 
@@ -82,6 +85,9 @@ export function SubForm({
 
                     {/* 配置设置 */}
                     <ConfigSection control={control} />
+
+                    {/* 协议过滤 */}
+                    <ProtocolFilterSection control={control} />
 
                     {/* 操作按钮 */}
                     <div className="flex gap-2 pt-4">
