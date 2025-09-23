@@ -6,7 +6,7 @@ interface SettingsLayoutProps {
   activeTab: string
   onTabChange: (id: string) => void
   children: React.ReactNode
-  renderActions: (isMobile?: boolean, hasChanges?: boolean) => React.ReactNode
+  renderActions: (isMobile: boolean) => React.ReactNode
   onSubmit: (e: React.FormEvent) => void
 }
 
@@ -96,7 +96,7 @@ export function SettingsLayout({
               {children}
             </div>
 
-            <div className="border-t bg-muted/10 p-6 flex-shrink-0">
+            <div className="border-t bg-muted/10 p-3 flex-shrink-0">
               <div className="flex justify-end gap-3">
                 {renderActions(false)}
               </div>

@@ -10,10 +10,7 @@ export function ProtocolFilterSection({ control }: { control: Control<SubRequest
     return (
         <div className="space-y-4">
             <div className="flex items-start justify-between gap-4">
-                <div className="space-y-1">
-                    <Label className="font-medium">协议过滤</Label>
-                    <p className="text-xs text-muted-foreground">启用后可以按协议类型筛选订阅节点</p>
-                </div>
+                <Label className="font-medium">协议过滤</Label>
                 <Controller
                     name="config.protocol_filter_enable"
                     control={control}
@@ -28,8 +25,12 @@ export function ProtocolFilterSection({ control }: { control: Control<SubRequest
 
             {enable && (
                 <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <Label className="text-sm">排除模式</Label>
+                    <div className="flex items-start justify-between gap-4">
+                        <div className="space-y-1">
+                            <Label className="font-medium">排除模式</Label>
+                            <p className="text-xs text-muted-foreground">关闭为包含以下协议,打开为排除以下协议</p>
+                        </div>
+
                         <Controller
                             name="config.protocol_filter_mode"
                             control={control}
@@ -58,7 +59,7 @@ export function ProtocolFilterSection({ control }: { control: Control<SubRequest
 
                             return (
                                 <div className="space-y-2">
-                                    <Label className="text-sm">选择协议</Label>
+                                    <Label className="font-medium">选择协议</Label>
                                     <div className="flex flex-wrap gap-2">
                                         {PROTOCOL_OPTIONS.map(option => {
                                             const isSelected = selectedValues.includes(option)
@@ -78,7 +79,6 @@ export function ProtocolFilterSection({ control }: { control: Control<SubRequest
                                             )
                                         })}
                                     </div>
-                                    <p className="text-xs text-muted-foreground">点击协议名称进行选择或取消选择</p>
                                 </div>
                             )
                         }}
