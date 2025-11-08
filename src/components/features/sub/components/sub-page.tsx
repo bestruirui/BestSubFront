@@ -66,6 +66,7 @@ export function SubPage() {
             <SubForm
                 initialData={editingSubscription ? {
                     name: editingSubscription.name,
+                    tags: editingSubscription.tags || [],
                     enable: editingSubscription.enable,
                     cron_expr: editingSubscription.cron_expr,
                     config: {
@@ -99,4 +100,4 @@ export function SubPage() {
             />
         </div>
     )
-} 
+}

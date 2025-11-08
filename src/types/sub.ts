@@ -9,6 +9,7 @@ export interface SubConfig {
 
 export interface SubRequest {
     name: string
+    tags: string[]
     enable: boolean
     cron_expr: string
     config: SubConfig
@@ -35,6 +36,7 @@ export interface SubNodeInfo {
 export interface SubResponse {
     id: number
     name: string
+    tags: string[]
     enable: boolean
     cron_expr: string
     config: SubConfig
@@ -48,4 +50,4 @@ export interface SubResponse {
 export interface SubNameAndID {
     id: number
     name: string
-} 
+}
