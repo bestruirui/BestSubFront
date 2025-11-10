@@ -3,12 +3,18 @@ import { Input } from '@/src/components/ui/input'
 import { Label } from '@/src/components/ui/label'
 import type { SubRequest } from '@/src/types/sub'
 import { generateNameFromUrl } from '../../utils'
+import { Badge } from "@/src/components/ui/badge";
+import { Button } from "@/src/components/ui/button";
+import { useState } from "react";
 
 export function BasicInfoSection({ control }: { control: Control<SubRequest> }) {
     const { field: nameField } = useController({
         name: 'name',
         control
     })
+
+    const [tag, setTag] = useState("")
+    const [tagError, setTagError] = useState("")
 
     return (
         <div className="space-y-4">
@@ -74,6 +80,69 @@ export function BasicInfoSection({ control }: { control: Control<SubRequest> }) 
                     )}
                 />
             </div>
+            <div className="space-y-2">
+                <Label htmlFor="tags" className="mb-2 block">订阅标签</Label>
+                <Controller
+                    name="tags"
+                    control={control}
+                    render={({ field }) => (
+                        <>
+                            {
+                                field.value.length > 0 && (
+                                    <div className="flex flex-wrap gap-2">
+                                        {field.value.map(option => {
+                                            return (
+                                                <Badge
+                                                    key={option}
+                                                    variant={'default'}
+                                                    className={`cursor-pointer transition-colors hover:bg-red-100 hover:text-red-700`}
+                                                    onClick={() => {
+                                                        const index = field.value.indexOf(option)
+                                                        field.value.splice(index, 1)
+                                                        field.onChange(field.value)
+                                                    }}
+                                                >
+                                                    {option} {'×'}
+                                                </Badge>
+                                            )
+                                        })}
+                                    </div>
+                                )
+                            }
+                            <div className="flex gap-2 pt-4">
+                                <Input
+                                    placeholder="新增订阅标签"
+                                    className="flex-1"
+                                    disabled={field.disabled}
+                                    value={tag}
+                                    onChange={(e) => setTag(e.target.value)}
+                                />
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    disabled={field.disabled}
+                                    onClick={() => {
+                                        if (field.value.indexOf(tag) >= 0) {
+                                            setTagError("标签已存在")
+                                        } else if (tag.trim() === "") {
+                                            setTagError("请输入标签")
+                                        } else {
+                                            setTagError("")
+                                            field.value.push(tag)
+                                            setTag("")
+                                        }
+                                    }}
+                                >
+                                    添加
+                                </Button>
+                            </div>
+                            {tagError !== "" && (
+                                <p className="text-xs text-red-500 mt-1">{tagError}</p>
+                            )}
+                        </>
+                    )}
+                />
+            </div>
         </div>
     )
-} 
+}

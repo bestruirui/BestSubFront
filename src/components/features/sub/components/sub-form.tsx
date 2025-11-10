@@ -28,6 +28,7 @@ export function SubForm({
 
     const defaultData = useMemo((): SubRequest => ({
         name: '',
+        tags: [],
         enable: true,
         cron_expr: '0 */6 * * *',
         config: {
